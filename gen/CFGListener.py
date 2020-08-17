@@ -17,10 +17,16 @@ class CFGListener(CPP14Listener):
         self.block_dict[self.domain_name]["Nodes"].append((self.block_name, self.block_start, self.block_stop))
 
     def addJunctionEdge(self):
-        self.block_dict[self.domain_name]["Edges"].append((self.nodes_stack.pop(), self.block_name))
+        source_node = self.nodes_stack.pop()
+        dest_node = self.block_name
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
     def addDecisionEdge(self):
-        self.block_dict[self.domain_name]["Edges"].append((self.parents_stack.pop(), self.block_name))
+        source_node = self.parents_stack.pop()
+        dest_node = self.block_name
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
     def enterFunctiondefinition(self, ctx:CPP14Parser.FunctiondefinitionContext):
         self.block_name = 1
@@ -30,6 +36,8 @@ class CFGListener(CPP14Listener):
             "Nodes" : [],
             "Edges" : []
         }
+        self.CFG_file = open('CFGS/' + self.domain_name + '.txt' , 'w')
+        self.CFG_file.write("initial nodes: " +str(self.block_name) + '\n')
 
     def enterSelectionstatement(self, ctx:CPP14Parser.SelectionstatementContext):
         self.block_stop = ctx.start.line
@@ -66,7 +74,9 @@ class CFGListener(CPP14Listener):
     def exitFunctiondefinition(self, ctx:CPP14Parser.FunctiondefinitionContext):
         self.block_stop = ctx.stop.line
         self.addNode()
+        self.CFG_file.write("final nodes: " + str(self.block_name) + '\n')
         print(self.block_dict)
+        self.CFG_file.close()
     def enterDeclarator(self, ctx:CPP14Parser.DeclaratorContext):
         pass
         #print(ctx.parentCtx.parentCtx.parentCtx.getText())
