@@ -6,7 +6,7 @@ from gen.CPP14Parser import CPP14Parser
 
 from antlr4 import *
 
-input_path=input()
+input_path=input("please write the source code path:\n")
 f=open(input_path,'r')
 source=f.read()
 
