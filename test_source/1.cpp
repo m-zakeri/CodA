@@ -8,9 +8,10 @@ int main()
 	int in;
 	cin>>in;
 	if (in >0){
-		{
-			cout<<"test";
-		}
+		for (int i=0;i<10;i++)
+	    	cout<<in+i;
+		while(in < 10)
+	    	in += 1;
 		if(in>9)
 	    	cout<<"ya_allah";
 	    else
@@ -20,6 +21,10 @@ int main()
 	}
 	else
 	    cout<<"ya_ali";
-	(in > 1) ? cout<<"ya_zahra" : cout<<"ya_ali";
+	int x = (in > 1) ? 10 : 11;
+	cout<<x<<endl;
+	do
+	   cout<<"ya_allah";
+	while(1);
 	return 0;
 }

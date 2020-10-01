@@ -6,7 +6,8 @@ from gen.CPP14Parser import CPP14Parser
 
 from antlr4 import *
 
-input_path=input("please write the source code path:\n")
+#input_path=input("please write the source code path:\n")
+input_path = "C:/Users/yasein/PycharmProjects/CodeAnalayserByGraph/test_source/1.cpp"
 f=open(input_path,'r')
 source=f.read()
 
@@ -20,7 +21,7 @@ parser = CPP14Parser(token_stream)
 
 pars_tree = parser.translationunit()
 
-cfg_listener = CFGListener()
+cfg_listener = CFGListener(token_stream)
 walker = ParseTreeWalker()
 
 walker.walk(cfg_listener,pars_tree)
