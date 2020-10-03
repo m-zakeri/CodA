@@ -37,4 +37,14 @@ logFile << "main8" << std::endl;
 
 	cout<<y<<endl;
 }
+<<<<<<< HEAD
 
+=======
+logFile << "main13" << std::endl;
+intx=(in>1)?10:11;cout<<x<<endl;do{
+logFile << "main14" << std::endl;
+cout<<"ya_allah";
+}while(1);
+logFile << "main15" << std::endl;
+return0;}
+>>>>>>> 67ee24dbc8df336420fee590f788957040829f69

@@ -6,7 +6,12 @@ from gen.CPP14Parser import CPP14Parser
 
 from antlr4 import *
 
+<<<<<<< HEAD
 input_path = 'test_source/4.cpp'
+=======
+# input_path=input("please write the source code path:\n")
+input_path = 'test_source/1.cpp'
+>>>>>>> 67ee24dbc8df336420fee590f788957040829f69
 f = open(input_path, 'r')
 source = f.read()
 
