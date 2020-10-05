@@ -36,7 +36,7 @@ int main()
     if(n==62)
     {
         for(i=0; i<3; i++)
-        {
+        [[test]]{
             if(ph[0][i]==1)
             {
                 cout<<"ya_allah"<<endl;
@@ -70,7 +70,7 @@ int main()
     else
     {
         for(i=0; i<3; i++)
-        {
+        [[not_used]]{
             if(H[n][i]==1)
                 cout<<"ya_allah"<<endl;
         }

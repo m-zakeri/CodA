@@ -6,17 +6,24 @@ from .CPP14_v2Listener import CPP14_v2Listener
 from .CPP14_v2Parser import CPP14_v2Parser
 from .CPP14_v2Lexer import CPP14_v2Lexer as lexer
 
-
+SWITCH_FOR = {
+    "for_while" : 0,
+    "range_for" : 1,
+    "switch" : 2
+}
 class CFGInstListener(CPP14_v2Listener):
 
     def addNode(self):
         self.block_dict[self.domain_name]["Nodes"].append((self.block_number, self.block_start, self.block_stop))
 
     def addJunctionEdge(self):
-        source_node = self.select_junction_stack.pop()
-        dest_node = self.block_number
-        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
-        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+        try:
+            source_node = self.select_junction_stack.pop()
+            dest_node = self.block_number
+            self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+            self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+        except:
+            pass
 
     def addDecisionEdge(self):
         source_node = self.select_decision_stack.pop()
@@ -42,21 +49,54 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
         self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
+    def addInitEdge(self):
+        source_node = self.block_number
+        dest_node = source_node + 1
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+
     def addIterateJunc(self):
         self.iterate_junction_stack.append(self.block_number)
 
     def addIterate(self):
         self.iterate_stack.append(self.block_number)
+        
+    def addSwitchEdge(self):
+        source_node = self.switch_stack[-1]
+        dest_node = self.block_number
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+    
+    def addSwitchJunctionEdge(self):
+        source_node = self.switch_junction_stack.pop()
+        dest_node = self.block_number
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+        
+    def addSwitch(self):
+        self.switch_stack.append(self.block_number)
+    def addSwitchJunc(self):
+        self.switch_junction_stack.append(self.block_number)
+
+    def addGotoEdge(self , label):
+        source_node = self.block_number
+        dest_node = self.label_dict[label]
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
     def insertAfter(self, ctx):
-        new_code = '\nlogFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;'
+        new_code = '\n' + self.logLine() + ';\n'
         self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
 
-    def __init__(self, common_token_stream: CommonTokenStream):
+    def logLine(self):
+        return 'logFile << "' + self.domain_name + ' ' + str(self.block_number) + '" << std::endl'
+    def __init__(self, common_token_stream: CommonTokenStream, number_of_tokens , directory_name):
         """
 
         :param common_token_stream:
         """
+        self.cfg_path = 'CFGS/v2/' + directory_name + '/'
+        self.instrument_path = 'Instrument/v2/' + directory_name + '/'
         self.block_dict = {}
         self.block_number = 0
         self.block_start = 0
@@ -66,7 +106,17 @@ class CFGInstListener(CPP14_v2Listener):
         self.select_decision_stack = []
         self.iterate_junction_stack = []
         self.iterate_stack = []
-        self.has_return_statement = False
+        self.switch_junction_stack = []
+        self.switch_stack = []
+        self.switch_for_stack = []
+        self.has_jump_stack = []
+        self.has_default_stack = []
+        self.has_case_stack = []
+        self.afterInsert = [''] * number_of_tokens
+        self.initial_nodes = set()
+        self.final_nodes = set()
+        self.label_dict = {}
+
         # Move all the tokens in the source code in a buffer, token_stream_rewriter.
         if common_token_stream is not None:
             self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(common_token_stream)
@@ -79,167 +129,432 @@ class CFGInstListener(CPP14_v2Listener):
         :param ctx:
         :return:
         """
-        self.instrumented_source = open('Instrument/instrumented_source.cpp', 'w')
+        self.instrumented_source = open(self.instrument_path + 'instrumented_source.cpp', 'w')
         new_code = '\n//in the name of allah\n#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
         self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
     def enterFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
+        self.initial_nodes = set()
+        self.final_nodes = set()
         self.block_number = 1
         self.block_start = ctx.functionbody().start.line
-        self.domain_name = ctx.declarator().getText().split('(')[0]
+        temp = ctx.declarator().getText().replace('~', "destructor")
+        self.domain_name = ''.join(c for c in temp if c.isalnum())
         self.block_dict[self.domain_name] = {
             "Nodes": [],
             "Edges": []
         }
-        self.CFG_file = open('CFGS/' + self.domain_name + '.txt', 'w')
-        self.CFG_file.write("initial nodes: " + str(self.block_number) + '\n')
+        self.CFG_file = open(self.cfg_path + self.domain_name + '.txt', 'w')
+        self.initial_nodes.add(self.block_number)
 
-    def enterFunctionbody(self, ctx: CPP14_v2Parser.FunctionbodyContext):
+    def enterFunctionbody1(self, ctx:CPP14_v2Parser.Functionbody1Context): #normal function
         """
         Insert a prob at the beginning of the function
         :param ctx:
         :return:
         """
-        self.has_return_statement = False
+        self.has_jump_stack.append(False)
         self.insertAfter(ctx)
 
-    def enterSelectionstatement(self, ctx: CPP14_v2Parser.SelectionstatementContext):
+
+    #selection
+    def enterSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context): #if
         self.block_stop = ctx.start.line
         self.addNode()
         if self.block_number in self.select_junction_stack:
             self.select_junction_stack.remove(self.block_number)
-        if ctx.getToken(lexer.Else, 0) is None:
-            self.addDecision()
-            self.addJunc()
-        else:
-            self.addDecision()
-            self.addDecision()
+        self.addDecision()
+        self.addJunc()
 
-    def enterIterationstatement(self, ctx: CPP14_v2Parser.IterationstatementContext):
+    def enterSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context): #if-else
         self.block_stop = ctx.start.line
         self.addNode()
-        if ctx.getToken(lexer.Do, 0) is None:
-            self.addDecision()
+        if self.block_number in self.select_junction_stack:
+            self.select_junction_stack.remove(self.block_number)
+        self.addDecision()
+        self.addDecision()
 
-        source_node = self.block_number
-        dest_node = source_node + 1
-        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
-        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+    def enterSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addSwitch()
+        self.has_jump_stack.append(True)
+        self.has_default_stack.append(False)
+        self.has_case_stack.append(False)
+    
+    def enterLabeledstatement1(self, ctx:CPP14_v2Parser.Labeledstatement1Context): #label
+        self.block_stop = ctx.start.line
+        self.addNode()
+        try:
+            if not self.has_jump_stack[-1]:
+                self.addInitEdge()
+        except:
+            self.addInitEdge()
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        label = ctx.getToken(lexer.Identifier , 0)
+        self.label_dict[label] = self.block_number
+        index = ctx.statement().start.tokenIndex
+        new_code = self.logLine() + ';\n'
+        self.token_stream_rewriter.insertBeforeIndex(index , new_code)
+        
+    def enterLabeledstatement2(self, ctx:CPP14_v2Parser.Labeledstatement2Context): #case
+        self.block_stop = ctx.start.line
+        self.addNode()
+        try:
+            if not self.has_jump_stack.pop():
+                self.addInitEdge()
+        except:
+            pass
+        self.has_case_stack[-1] = True
+        self.has_jump_stack.append(False)
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        if not self.has_default_stack[-1]:
+            self.addSwitchEdge()
+        index = ctx.statement().start.tokenIndex
+        new_code = self.logLine() + ';\n'
+        self.token_stream_rewriter.insertBeforeIndex(index, new_code)
+    
+    def enterLabeledstatement3(self, ctx:CPP14_v2Parser.Labeledstatement3Context): #default
+        self.block_stop = ctx.start.line
+        self.addNode()
+        try:
+            if not self.has_jump_stack.pop():
+                self.addInitEdge()
+        except:
+            pass
+        self.has_default_stack[-1] = True
+        self.has_jump_stack.append(False)
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.addSwitchEdge()
+        index = ctx.statement().start.tokenIndex
+        new_code = self.logLine() + ';\n'
+        self.token_stream_rewriter.insertBeforeIndex(index, new_code)
+
+
+    #iteration
+    def enterIterationstatement1(self, ctx:CPP14_v2Parser.Iterationstatement1Context): #while
+        self.switch_for_stack.append(SWITCH_FOR["for_while"])
+        self.has_jump_stack.append(False)
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addInitEdge()
 
         self.block_number += 1
+        self.block_start = ctx.start.line
         self.addIterateJunc()
         self.addIterate()
-        self.block_start = ctx.start.line
 
-    def enterStatement(self, ctx: CPP14_v2Parser.StatementContext):
+    def enterIterationstatement3(self, ctx:CPP14_v2Parser.Iterationstatement3Context): # for
+        self.switch_for_stack.append(SWITCH_FOR["for_while"])
+        self.has_jump_stack.append(False)
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addInitEdge()
+
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.addIterateJunc()
+        self.addIterate()
+
+        if ctx.condition() == None:
+            new_code = self.logLine() + ' '
+            self.token_stream_rewriter.insertAfter(ctx.forinitstatement().stop.tokenIndex , new_code)
+
+    def enterIterationstatement2(self, ctx:CPP14_v2Parser.Iterationstatement2Context): # do-while
+        self.switch_for_stack.append(SWITCH_FOR["for_while"])
+        self.has_jump_stack.append(False)
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addInitEdge()
+
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.addIterate()
+
+    def enterIterationstatement4(self, ctx:CPP14_v2Parser.Iterationstatement4Context): #range-for
+        self.switch_for_stack.append(SWITCH_FOR["range_for"])
+        self.has_jump_stack.append(False)
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addDecision()
+        self.addInitEdge()
+
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.addIterate()
+
+    def enterCondition(self, ctx:CPP14_v2Parser.ConditionContext): # for and while condition
+        if isinstance(ctx.parentCtx , CPP14_v2Parser.IterationstatementContext):
+            new_code = self.logLine()
+            new_code += ' && ('
+            self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
+            new_code = ')'
+            self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
+
+    def enterExpression(self, ctx:CPP14_v2Parser.ExpressionContext): #do-while condition
+        if isinstance(ctx.parentCtx, CPP14_v2Parser.Iterationstatement2Context):
+            new_code = self.logLine()
+            new_code += ' && ('
+            self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex,new_code)
+            new_code = ')'
+            self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex ,new_code)
+    
+    def enterStatement(self, ctx:CPP14_v2Parser.StatementContext):
         """
         DFS traversal of a statement subtree, rooted at ctx.
         If the statement is a branching condition insert a prob.
         :param ctx:
         :return:
         """
+        #do-while and range-for
         if isinstance(ctx.parentCtx,
-                      CPP14_v2Parser.IterationstatementContext):
+                      (CPP14_v2Parser.Iterationstatement4Context,CPP14_v2Parser.Iterationstatement2Context)):
             # if there is a compound statement after the branchning condition:
-            if isinstance(ctx.children[0], CPP14_v2Parser.CompoundstatementContext):
-                self.insertAfter(ctx)
+            body = ctx.compoundstatement()
+            if body != None:
+                self.insertAfter(body)
             # if there is only one statement after the branchning condition then create a block.
-            elif not isinstance(ctx.children[0],
-                                (CPP14_v2Parser.SelectionstatementContext, CPP14_v2Parser.IterationstatementContext)):
+            else:
                 new_code = '{'
-                new_code += '\nlogFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-                new_code += ctx.getText()
-                new_code += '\n}'
-                self.token_stream_rewriter.replaceRange(ctx.start.tokenIndex, ctx.stop.tokenIndex, new_code)
+                new_code += '\n'+ self.logLine() +';\n'
+                self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
-        if isinstance(ctx.parentCtx,
-                      (CPP14_v2Parser.SelectionstatementContext)):
+        #one line while and for
+        elif isinstance(ctx.parentCtx , CPP14_v2Parser.IterationstatementContext):
+            if ctx.compoundstatement() == None:
+                new_code = '{\n'
+                self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
+
+        elif isinstance(ctx.parentCtx,
+                      (CPP14_v2Parser.Selectionstatement1Context , CPP14_v2Parser.Selectionstatement2Context)):
             self.block_number += 1
             self.addDecisionEdge()
             self.block_start = ctx.start.line
-            self.addJunc()
+            self.has_jump_stack.append(False)
             # if there is a compound statement after the branchning condition:
-            if isinstance(ctx.children[0], CPP14_v2Parser.CompoundstatementContext):
-
-                self.insertAfter(ctx)
+            body = ctx.compoundstatement()
+            if body != None:
+                self.insertAfter(body)
             # if there is only one statement after the branchning condition then create a block.
-            elif not isinstance(ctx.children[0],
-                                (CPP14_v2Parser.SelectionstatementContext, CPP14_v2Parser.IterationstatementContext)):
+            else:
                 new_code = '{'
-                new_code += '\nlogFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-                new_code += ctx.getText()
-                new_code += '\n}'
-                self.token_stream_rewriter.replaceRange(ctx.start.tokenIndex, ctx.stop.tokenIndex, new_code)
+                new_code += '\n' + self.logLine() + ';\n'
+                self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
+
+        elif isinstance(ctx.parentCtx,
+                        CPP14_v2Parser.Selectionstatement3Context):
+            if ctx.compoundstatement() == None:
+                new_code = '{\n'
+                self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
     def exitStatement(self, ctx: CPP14_v2Parser.StatementContext):
         if isinstance(ctx.parentCtx, CPP14_v2Parser.IterationstatementContext):
             self.addIterateEdge()
             self.block_stop = ctx.stop.line
             self.addNode()
+            if ctx.compoundstatement() == None:
+                new_code = '\n}'
+                self.afterInsert[ctx.stop.tokenIndex] += new_code
 
-        if isinstance(ctx.parentCtx, CPP14_v2Parser.SelectionstatementContext):
+        elif isinstance(ctx.parentCtx,
+                        (CPP14_v2Parser.Selectionstatement1Context, CPP14_v2Parser.Selectionstatement2Context)):
             self.block_stop = ctx.stop.line
             self.addNode()
+            if not self.has_jump_stack.pop():
+                self.addJunc()
+            if ctx.compoundstatement() == None:
+                new_code = '\n}'
+                self.afterInsert[ctx.stop.tokenIndex] += new_code
 
-    def exitSelectionstatement(self, ctx: CPP14_v2Parser.SelectionstatementContext):
+        elif isinstance(ctx.parentCtx,
+                        CPP14_v2Parser.Selectionstatement3Context):
+            if ctx.compoundstatement() == None:
+                new_code = '\n}'
+                self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context):#if
         self.block_number += 1
         self.block_start = ctx.stop.line
         self.addJunctionEdge()
         self.addJunctionEdge()
-        self.addJunc()
 
-        new_code = '\nlogFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-        self.token_stream_rewriter.insertBeforeIndex(ctx.stop.tokenIndex + 1, new_code)
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
 
-    def exitIterationstatement(self, ctx: CPP14_v2Parser.IterationstatementContext):
+    def exitSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context):#if-else
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addJunctionEdge()
+        self.addJunctionEdge()
+
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        if not self.has_default_stack.pop():
+            self.switch_junction_stack.append(self.switch_stack.pop())
+            if not self.has_case_stack.pop():
+                self.has_jump_stack.pop()
+            elif not self.has_jump_stack.pop():
+                self.addSwitchJunc()
+        elif not self.has_jump_stack.pop():
+            self.addSwitchJunc()
+
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+
+        while True:
+            try:
+                self.addSwitchJunctionEdge()
+            except:
+                break
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitIterationstatement1(self, ctx:CPP14_v2Parser.Iterationstatement1Context): #while
         self.iterate_stack.pop()
+        self.switch_for_stack.pop()
+        self.has_jump_stack.pop()
+
         self.block_number += 1
         self.block_start = ctx.stop.line
-        if ctx.getToken(lexer.Do, 0) is None:
-            self.addDecisionEdge()
         while True:
             try:
                 self.addIterateJunctionEdge()
             except:
                 break
-        new_code = '\nlogFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-        self.token_stream_rewriter.insertBeforeIndex(ctx.stop.tokenIndex + 1, new_code)
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
 
-    def exitFunctionbody(self, ctx: CPP14_v2Parser.FunctionbodyContext):
+    def exitIterationstatement3(self, ctx:CPP14_v2Parser.Iterationstatement3Context): #for
+        self.iterate_stack.pop()
+        self.switch_for_stack.pop()
+        self.has_jump_stack.pop()
+
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        while True:
+            try:
+                self.addIterateJunctionEdge()
+            except:
+                break
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitIterationstatement2(self, ctx:CPP14_v2Parser.Iterationstatement2Context): #do-while
+        self.addIterateJunc()
+
+        self.iterate_stack.pop()
+        self.switch_for_stack.pop()
+        self.has_jump_stack.pop()
+
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        while True:
+            try:
+                self.addIterateJunctionEdge()
+            except:
+                break
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitIterationstatement4(self, ctx: CPP14_v2Parser.Iterationstatement4Context):  # range-for
+        self.addIterateJunc()
+
+        self.iterate_stack.pop()
+        self.switch_for_stack.pop()
+        self.has_jump_stack.pop()
+
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addDecisionEdge()
+        while True:
+            try:
+                self.addIterateJunctionEdge()
+            except:
+                break
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitFunctionbody1(self, ctx:CPP14_v2Parser.Functionbody1Context):
         """
          Insert a prob at the end of the function only if the function is void.
         :param ctx:
         :return:
         """
-        if not self.has_return_statement:
-            new_code = '\n logFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-            self.token_stream_rewriter.insertBeforeIndex(ctx.stop.tokenIndex, new_code)
+        if not self.has_jump_stack.pop():
+            self.block_stop = ctx.stop.line
+            self.addNode()
+            self.final_nodes.add(self.block_number)
 
-    def enterJumpstatement(self, ctx: CPP14_v2Parser.JumpstatementContext):
-        """
-        Insert a prob at the end of the function with return statement.
-        :param ctx:
-        :return:
-        """
-        if ctx.getChild(0).getText() == 'break':
-            if self.block_number in self.select_junction_stack:
-                self.select_junction_stack.remove(self.block_number)
+    def enterJumpstatement1(self, ctx:CPP14_v2Parser.Jumpstatement1Context): #break
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
+        if self.switch_for_stack[-1] == SWITCH_FOR["switch"]:
+             self.addSwitchJunc()
+        else:
             self.addIterateJunc()
 
-        if ctx.getChild(0).getText() == 'continue':
-            if self.block_number in self.select_junction_stack:
-                self.select_junction_stack.remove(self.block_number)
-            self.addIterateEdge()
+    def enterJumpstatement2(self, ctx: CPP14_v2Parser.Jumpstatement2Context):  # continue
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
+        i = 1
+        while (self.switch_for_stack[-i] == SWITCH_FOR["switch"]):
+            i = i-1
+        if self.switch_for_stack[-i] == SWITCH_FOR["range_for"]:
+            self.addIterateJunc()
+        self.addIterateEdge()
 
-        if ctx.getChild(0).getText() == 'return':
-            #new_code = '\n logFile << "' + self.domain_name + str(self.block_number) + '" << std::endl;\n'
-            #self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
-            self.has_return_statement = True
+    def enterJumpstatement3(self, ctx:CPP14_v2Parser.Jumpstatement3Context): #return
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
+        self.final_nodes.add(self.block_number)
+
+    def enterJumpstatement4(self, ctx:CPP14_v2Parser.Jumpstatement4Context): #return
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
+        self.final_nodes.add(self.block_number)
+
+    def enterJumpstatement5(self, ctx:CPP14_v2Parser.Jumpstatement5Context): #goto
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
+        label = ctx.getToken(lexer.Identifier , 0)
+        self.addGotoEdge(label)
+
 
     def exitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         self.block_stop = ctx.stop.line
         self.addNode()
-        self.CFG_file.write("final nodes: " + str(self.block_number) + '\n')
+        initial_nodes_str = ' '.join(str(node) for node in self.initial_nodes)
+        self.CFG_file.write("initial nodes:" + initial_nodes_str + '\n')
+        self.final_nodes.add(self.block_number)
+        final_nodes_str = ' '.join(str(node) for node in self.final_nodes)
+        self.CFG_file.write("final nodes:" + final_nodes_str + '\n')
         print(self.block_dict)
         self.CFG_file.close()
 
@@ -249,6 +564,9 @@ class CFGInstListener(CPP14_v2Listener):
         :param ctx:
         :return:
         """
+        for i in range(len(self.afterInsert)):
+            if self.afterInsert[i] != '':
+                self.token_stream_rewriter.insertAfter(i , self.afterInsert[i])
         self.instrumented_source.write(self.token_stream_rewriter.getDefaultText())
         self.instrumented_source.close()
 

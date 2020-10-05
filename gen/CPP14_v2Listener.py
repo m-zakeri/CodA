@@ -1358,21 +1358,12 @@ class CPP14_v2Listener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CPP14_v2Parser#expression2.
-    def enterExpression2(self, ctx:CPP14_v2Parser.Expression2Context):
+    # Enter a parse tree produced by CPP14_v2Parser#expression.
+    def enterExpression(self, ctx:CPP14_v2Parser.ExpressionContext):
         pass
 
-    # Exit a parse tree produced by CPP14_v2Parser#expression2.
-    def exitExpression2(self, ctx:CPP14_v2Parser.Expression2Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#expression1.
-    def enterExpression1(self, ctx:CPP14_v2Parser.Expression1Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#expression1.
-    def exitExpression1(self, ctx:CPP14_v2Parser.Expression1Context):
+    # Exit a parse tree produced by CPP14_v2Parser#expression.
+    def exitExpression(self, ctx:CPP14_v2Parser.ExpressionContext):
         pass
 
 
@@ -1385,75 +1376,12 @@ class CPP14_v2Listener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CPP14_v2Parser#statement1.
-    def enterStatement1(self, ctx:CPP14_v2Parser.Statement1Context):
+    # Enter a parse tree produced by CPP14_v2Parser#statement.
+    def enterStatement(self, ctx:CPP14_v2Parser.StatementContext):
         pass
 
-    # Exit a parse tree produced by CPP14_v2Parser#statement1.
-    def exitStatement1(self, ctx:CPP14_v2Parser.Statement1Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement2.
-    def enterStatement2(self, ctx:CPP14_v2Parser.Statement2Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement2.
-    def exitStatement2(self, ctx:CPP14_v2Parser.Statement2Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement3.
-    def enterStatement3(self, ctx:CPP14_v2Parser.Statement3Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement3.
-    def exitStatement3(self, ctx:CPP14_v2Parser.Statement3Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement4.
-    def enterStatement4(self, ctx:CPP14_v2Parser.Statement4Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement4.
-    def exitStatement4(self, ctx:CPP14_v2Parser.Statement4Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement5.
-    def enterStatement5(self, ctx:CPP14_v2Parser.Statement5Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement5.
-    def exitStatement5(self, ctx:CPP14_v2Parser.Statement5Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement6.
-    def enterStatement6(self, ctx:CPP14_v2Parser.Statement6Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement6.
-    def exitStatement6(self, ctx:CPP14_v2Parser.Statement6Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement7.
-    def enterStatement7(self, ctx:CPP14_v2Parser.Statement7Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement7.
-    def exitStatement7(self, ctx:CPP14_v2Parser.Statement7Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#statement8.
-    def enterStatement8(self, ctx:CPP14_v2Parser.Statement8Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#statement8.
-    def exitStatement8(self, ctx:CPP14_v2Parser.Statement8Context):
+    # Exit a parse tree produced by CPP14_v2Parser#statement.
+    def exitStatement(self, ctx:CPP14_v2Parser.StatementContext):
         pass
 
 
@@ -1547,30 +1475,12 @@ class CPP14_v2Listener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by CPP14_v2Parser#condition1.
-    def enterCondition1(self, ctx:CPP14_v2Parser.Condition1Context):
+    # Enter a parse tree produced by CPP14_v2Parser#condition.
+    def enterCondition(self, ctx:CPP14_v2Parser.ConditionContext):
         pass
 
-    # Exit a parse tree produced by CPP14_v2Parser#condition1.
-    def exitCondition1(self, ctx:CPP14_v2Parser.Condition1Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#condition2.
-    def enterCondition2(self, ctx:CPP14_v2Parser.Condition2Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#condition2.
-    def exitCondition2(self, ctx:CPP14_v2Parser.Condition2Context):
-        pass
-
-
-    # Enter a parse tree produced by CPP14_v2Parser#condition3.
-    def enterCondition3(self, ctx:CPP14_v2Parser.Condition3Context):
-        pass
-
-    # Exit a parse tree produced by CPP14_v2Parser#condition3.
-    def exitCondition3(self, ctx:CPP14_v2Parser.Condition3Context):
+    # Exit a parse tree produced by CPP14_v2Parser#condition.
+    def exitCondition(self, ctx:CPP14_v2Parser.ConditionContext):
         pass
 
 

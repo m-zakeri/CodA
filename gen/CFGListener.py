@@ -2,9 +2,9 @@
 
 from antlr4 import *
 from antlr4 import TokenStreamRewriter
-from .CPP14Listener import CPP14Listener
-from .CPP14Parser import CPP14Parser
-from .CPP14Lexer import CPP14Lexer as lexer
+from gen.CPP14Listener import CPP14Listener
+from gen.CPP14Parser import CPP14Parser
+from gen.CPP14Lexer import CPP14Lexer as lexer
 
 
 class CFGListener(CPP14Listener):
@@ -72,6 +72,7 @@ class CFGListener(CPP14Listener):
         self.beforeInsert = [''] * number_of_tokens
         self.has_return_statement = False
         self.has_jump = False
+        print("ya_ali")
         # Move all the tokens in the source code in a buffer, token_stream_rewriter.
         if common_token_stream is not None:
             self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(common_token_stream)

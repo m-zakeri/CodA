@@ -1,0 +1,34 @@
+        -:    0:Source:./bin_search.c
+        -:    0:Graph:bin_search.gcno
+        -:    0:Data:bin_search.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdio.h>
+        1:    2:int main()
+        -:    3:{
+        -:    4:   int c, first, last, middle, n, search, array[100];
+        1:    5:   printf("Enter number of elements:\n");
+        1:    6:   scanf("%d",&n); 
+        1:    7:   printf("Enter %d integers:\n", n);
+        5:    8:   for (c = 0; c < n; c++)
+        4:    9:      scanf("%d",&array[c]); 
+        1:   10:   printf("Enter the value to find:\n");
+        1:   11:   scanf("%d", &search);
+        1:   12:   first = 0;
+        1:   13:   last = n - 1;
+        1:   14:   middle = (first+last)/2;
+        2:   15:   while (first <= last) {
+        2:   16:      if (array[middle] < search)
+        1:   17:         first = middle + 1;    
+        1:   18:      else if (array[middle] == search) {
+        1:   19:         printf("%d is present at index %d.\n", search, middle+1);
+        1:   20:         break;
+        -:   21:      }
+        -:   22:      else
+    #####:   23:         last = middle - 1;
+        1:   24:      middle = (first + last)/2;
+        -:   25:   }
+        1:   26:   if (first > last)
+    #####:   27:      printf("Not found! %d is not present in the list.\n", search);
+        1:   28:   return 0;  
+        -:   29:}

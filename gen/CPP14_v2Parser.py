@@ -9418,66 +9418,31 @@ class CPP14_v2Parser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
+        def assignmentexpression(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.AssignmentexpressionContext,0)
 
-        def getRuleIndex(self):
-            return CPP14_v2Parser.RULE_expression
-
-     
-        def copyFrom(self, ctx:ParserRuleContext):
-            super().copyFrom(ctx)
-
-
-    class Expression2Context(ExpressionContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.ExpressionContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
 
         def expression(self):
             return self.getTypedRuleContext(CPP14_v2Parser.ExpressionContext,0)
 
+
         def Comma(self):
             return self.getToken(CPP14_v2Parser.Comma, 0)
-        def assignmentexpression(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AssignmentexpressionContext,0)
 
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExpression2" ):
-                listener.enterExpression2(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExpression2" ):
-                listener.exitExpression2(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitExpression2" ):
-                return visitor.visitExpression2(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Expression1Context(ExpressionContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.ExpressionContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def assignmentexpression(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AssignmentexpressionContext,0)
-
+        def getRuleIndex(self):
+            return CPP14_v2Parser.RULE_expression
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterExpression1" ):
-                listener.enterExpression1(self)
+            if hasattr( listener, "enterExpression" ):
+                listener.enterExpression(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitExpression1" ):
-                listener.exitExpression1(self)
+            if hasattr( listener, "exitExpression" ):
+                listener.exitExpression(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitExpression1" ):
-                return visitor.visitExpression1(self)
+            if hasattr( visitor, "visitExpression" ):
+                return visitor.visitExpression(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -9492,10 +9457,6 @@ class CPP14_v2Parser ( Parser ):
         self.enterRecursionRule(localctx, 92, self.RULE_expression, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            localctx = CPP14_v2Parser.Expression1Context(self, localctx)
-            self._ctx = localctx
-            _prevctx = localctx
-
             self.state = 997
             self.assignmentexpression()
             self._ctx.stop = self._input.LT(-1)
@@ -9507,7 +9468,7 @@ class CPP14_v2Parser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    localctx = CPP14_v2Parser.Expression2Context(self, CPP14_v2Parser.ExpressionContext(self, _parentctx, _parentState))
+                    localctx = CPP14_v2Parser.ExpressionContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_expression)
                     self.state = 999
                     if not self.precpred(self._ctx, 1):
@@ -9583,232 +9544,59 @@ class CPP14_v2Parser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-
-        def getRuleIndex(self):
-            return CPP14_v2Parser.RULE_statement
-
-     
-        def copyFrom(self, ctx:ParserRuleContext):
-            super().copyFrom(ctx)
+        def labeledstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.LabeledstatementContext,0)
 
 
+        def expressionstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.ExpressionstatementContext,0)
 
-    class Statement7Context(StatementContext):
 
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
+        def attributespecifierseq(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
+
+
+        def compoundstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.CompoundstatementContext,0)
+
+
+        def selectionstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.SelectionstatementContext,0)
+
+
+        def iterationstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.IterationstatementContext,0)
+
+
+        def jumpstatement(self):
+            return self.getTypedRuleContext(CPP14_v2Parser.JumpstatementContext,0)
+
 
         def declarationstatement(self):
             return self.getTypedRuleContext(CPP14_v2Parser.DeclarationstatementContext,0)
 
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement7" ):
-                listener.enterStatement7(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement7" ):
-                listener.exitStatement7(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement7" ):
-                return visitor.visitStatement7(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement8Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
         def tryblock(self):
             return self.getTypedRuleContext(CPP14_v2Parser.TryblockContext,0)
 
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
 
+        def getRuleIndex(self):
+            return CPP14_v2Parser.RULE_statement
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement8" ):
-                listener.enterStatement8(self)
+            if hasattr( listener, "enterStatement" ):
+                listener.enterStatement(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement8" ):
-                listener.exitStatement8(self)
+            if hasattr( listener, "exitStatement" ):
+                listener.exitStatement(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement8" ):
-                return visitor.visitStatement8(self)
+            if hasattr( visitor, "visitStatement" ):
+                return visitor.visitStatement(self)
             else:
                 return visitor.visitChildren(self)
 
-
-    class Statement5Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def iterationstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.IterationstatementContext,0)
-
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement5" ):
-                listener.enterStatement5(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement5" ):
-                listener.exitStatement5(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement5" ):
-                return visitor.visitStatement5(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement6Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def jumpstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.JumpstatementContext,0)
-
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement6" ):
-                listener.enterStatement6(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement6" ):
-                listener.exitStatement6(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement6" ):
-                return visitor.visitStatement6(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement3Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def compoundstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.CompoundstatementContext,0)
-
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement3" ):
-                listener.enterStatement3(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement3" ):
-                listener.exitStatement3(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement3" ):
-                return visitor.visitStatement3(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement4Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def selectionstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.SelectionstatementContext,0)
-
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement4" ):
-                listener.enterStatement4(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement4" ):
-                listener.exitStatement4(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement4" ):
-                return visitor.visitStatement4(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement1Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def labeledstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.LabeledstatementContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement1" ):
-                listener.enterStatement1(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement1" ):
-                listener.exitStatement1(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement1" ):
-                return visitor.visitStatement1(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Statement2Context(StatementContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.StatementContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def expressionstatement(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.ExpressionstatementContext,0)
-
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
-
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterStatement2" ):
-                listener.enterStatement2(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitStatement2" ):
-                listener.exitStatement2(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitStatement2" ):
-                return visitor.visitStatement2(self)
-            else:
-                return visitor.visitChildren(self)
 
 
 
@@ -9822,14 +9610,12 @@ class CPP14_v2Parser ( Parser ):
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,84,self._ctx)
             if la_ == 1:
-                localctx = CPP14_v2Parser.Statement1Context(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 1009
                 self.labeledstatement()
                 pass
 
             elif la_ == 2:
-                localctx = CPP14_v2Parser.Statement2Context(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 1011
                 self._errHandler.sync(self)
@@ -9844,7 +9630,6 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 3:
-                localctx = CPP14_v2Parser.Statement3Context(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 1015
                 self._errHandler.sync(self)
@@ -9859,7 +9644,6 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 4:
-                localctx = CPP14_v2Parser.Statement4Context(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 1019
                 self._errHandler.sync(self)
@@ -9874,7 +9658,6 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 5:
-                localctx = CPP14_v2Parser.Statement5Context(self, localctx)
                 self.enterOuterAlt(localctx, 5)
                 self.state = 1023
                 self._errHandler.sync(self)
@@ -9889,7 +9672,6 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 6:
-                localctx = CPP14_v2Parser.Statement6Context(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 1027
                 self._errHandler.sync(self)
@@ -9904,14 +9686,12 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 7:
-                localctx = CPP14_v2Parser.Statement7Context(self, localctx)
                 self.enterOuterAlt(localctx, 7)
                 self.state = 1030
                 self.declarationstatement()
                 pass
 
             elif la_ == 8:
-                localctx = CPP14_v2Parser.Statement8Context(self, localctx)
                 self.enterOuterAlt(localctx, 8)
                 self.state = 1032
                 self._errHandler.sync(self)
@@ -10563,109 +10343,50 @@ class CPP14_v2Parser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-
-        def getRuleIndex(self):
-            return CPP14_v2Parser.RULE_condition
-
-     
-        def copyFrom(self, ctx:ParserRuleContext):
-            super().copyFrom(ctx)
-
-
-
-    class Condition1Context(ConditionContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.ConditionContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
         def expression(self):
             return self.getTypedRuleContext(CPP14_v2Parser.ExpressionContext,0)
 
 
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCondition1" ):
-                listener.enterCondition1(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCondition1" ):
-                listener.exitCondition1(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCondition1" ):
-                return visitor.visitCondition1(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Condition2Context(ConditionContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.ConditionContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
         def declspecifierseq(self):
             return self.getTypedRuleContext(CPP14_v2Parser.DeclspecifierseqContext,0)
+
 
         def declarator(self):
             return self.getTypedRuleContext(CPP14_v2Parser.DeclaratorContext,0)
 
+
         def Assign(self):
             return self.getToken(CPP14_v2Parser.Assign, 0)
+
         def initializerclause(self):
             return self.getTypedRuleContext(CPP14_v2Parser.InitializerclauseContext,0)
+
 
         def attributespecifierseq(self):
             return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
 
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCondition2" ):
-                listener.enterCondition2(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCondition2" ):
-                listener.exitCondition2(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCondition2" ):
-                return visitor.visitCondition2(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class Condition3Context(ConditionContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a CPP14_v2Parser.ConditionContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def declspecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.DeclspecifierseqContext,0)
-
-        def declarator(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.DeclaratorContext,0)
 
         def bracedinitlist(self):
             return self.getTypedRuleContext(CPP14_v2Parser.BracedinitlistContext,0)
 
-        def attributespecifierseq(self):
-            return self.getTypedRuleContext(CPP14_v2Parser.AttributespecifierseqContext,0)
 
+        def getRuleIndex(self):
+            return CPP14_v2Parser.RULE_condition
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterCondition3" ):
-                listener.enterCondition3(self)
+            if hasattr( listener, "enterCondition" ):
+                listener.enterCondition(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitCondition3" ):
-                listener.exitCondition3(self)
+            if hasattr( listener, "exitCondition" ):
+                listener.exitCondition(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitCondition3" ):
-                return visitor.visitCondition3(self)
+            if hasattr( visitor, "visitCondition" ):
+                return visitor.visitCondition(self)
             else:
                 return visitor.visitChildren(self)
+
 
 
 
@@ -10679,14 +10400,12 @@ class CPP14_v2Parser ( Parser ):
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,95,self._ctx)
             if la_ == 1:
-                localctx = CPP14_v2Parser.Condition1Context(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 1102
                 self.expression(0)
                 pass
 
             elif la_ == 2:
-                localctx = CPP14_v2Parser.Condition2Context(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 1104
                 self._errHandler.sync(self)
@@ -10707,7 +10426,6 @@ class CPP14_v2Parser ( Parser ):
                 pass
 
             elif la_ == 3:
-                localctx = CPP14_v2Parser.Condition3Context(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 1112
                 self._errHandler.sync(self)

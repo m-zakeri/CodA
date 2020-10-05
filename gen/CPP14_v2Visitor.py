@@ -759,13 +759,8 @@ class CPP14_v2Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by CPP14_v2Parser#expression2.
-    def visitExpression2(self, ctx:CPP14_v2Parser.Expression2Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#expression1.
-    def visitExpression1(self, ctx:CPP14_v2Parser.Expression1Context):
+    # Visit a parse tree produced by CPP14_v2Parser#expression.
+    def visitExpression(self, ctx:CPP14_v2Parser.ExpressionContext):
         return self.visitChildren(ctx)
 
 
@@ -774,43 +769,8 @@ class CPP14_v2Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by CPP14_v2Parser#statement1.
-    def visitStatement1(self, ctx:CPP14_v2Parser.Statement1Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement2.
-    def visitStatement2(self, ctx:CPP14_v2Parser.Statement2Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement3.
-    def visitStatement3(self, ctx:CPP14_v2Parser.Statement3Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement4.
-    def visitStatement4(self, ctx:CPP14_v2Parser.Statement4Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement5.
-    def visitStatement5(self, ctx:CPP14_v2Parser.Statement5Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement6.
-    def visitStatement6(self, ctx:CPP14_v2Parser.Statement6Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement7.
-    def visitStatement7(self, ctx:CPP14_v2Parser.Statement7Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#statement8.
-    def visitStatement8(self, ctx:CPP14_v2Parser.Statement8Context):
+    # Visit a parse tree produced by CPP14_v2Parser#statement.
+    def visitStatement(self, ctx:CPP14_v2Parser.StatementContext):
         return self.visitChildren(ctx)
 
 
@@ -864,18 +824,8 @@ class CPP14_v2Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by CPP14_v2Parser#condition1.
-    def visitCondition1(self, ctx:CPP14_v2Parser.Condition1Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#condition2.
-    def visitCondition2(self, ctx:CPP14_v2Parser.Condition2Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by CPP14_v2Parser#condition3.
-    def visitCondition3(self, ctx:CPP14_v2Parser.Condition3Context):
+    # Visit a parse tree produced by CPP14_v2Parser#condition.
+    def visitCondition(self, ctx:CPP14_v2Parser.ConditionContext):
         return self.visitChildren(ctx)
 
 
