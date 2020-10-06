@@ -6,6 +6,8 @@ from .CPP14_v2Listener import CPP14_v2Listener
 from .CPP14_v2Parser import CPP14_v2Parser
 from .CPP14_v2Lexer import CPP14_v2Lexer as lexer
 
+import networkx as nx
+import matplotlib.pyplot as plt
 SWITCH_FOR = {
     "for_while" : 0,
     "range_for" : 1,
@@ -116,13 +118,15 @@ class CFGInstListener(CPP14_v2Listener):
         self.initial_nodes = set()
         self.final_nodes = set()
         self.label_dict = {}
+        self.goto_dict = {}
 
         # Move all the tokens in the source code in a buffer, token_stream_rewriter.
         if common_token_stream is not None:
             self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(common_token_stream)
         else:
             raise TypeError('common_token_stream is None')
-
+        # create graph
+        self.CFG_graph = nx.Graph()
     def enterTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
         Creating and open a text file for logging the instrumentation result
@@ -136,8 +140,6 @@ class CFGInstListener(CPP14_v2Listener):
     def enterFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         self.initial_nodes = set()
         self.final_nodes = set()
-        self.block_number = 1
-        self.block_start = ctx.functionbody().start.line
         temp = ctx.declarator().getText().replace('~', "destructor")
         self.domain_name = ''.join(c for c in temp if c.isalnum())
         self.block_dict[self.domain_name] = {
@@ -145,7 +147,7 @@ class CFGInstListener(CPP14_v2Listener):
             "Edges": []
         }
         self.CFG_file = open(self.cfg_path + self.domain_name + '.txt', 'w')
-        self.initial_nodes.add(self.block_number)
+
 
     def enterFunctionbody1(self, ctx:CPP14_v2Parser.Functionbody1Context): #normal function
         """
@@ -153,9 +155,11 @@ class CFGInstListener(CPP14_v2Listener):
         :param ctx:
         :return:
         """
+        self.block_number = 1
+        self.block_start = ctx.start.line
         self.has_jump_stack.append(False)
         self.insertAfter(ctx)
-
+        self.initial_nodes.add(self.block_number)
 
     #selection
     def enterSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context): #if
@@ -181,6 +185,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_jump_stack.append(True)
         self.has_default_stack.append(False)
         self.has_case_stack.append(False)
+        self.switch_for_stack.append(SWITCH_FOR["switch"])
     
     def enterLabeledstatement1(self, ctx:CPP14_v2Parser.Labeledstatement1Context): #label
         self.block_stop = ctx.start.line
@@ -192,8 +197,14 @@ class CFGInstListener(CPP14_v2Listener):
             self.addInitEdge()
         self.block_number += 1
         self.block_start = ctx.start.line
-        label = ctx.getToken(lexer.Identifier , 0)
+        label = ctx.Identifier().getText()
         self.label_dict[label] = self.block_number
+        try:
+            for source_node in self.goto_dict[label]:
+                self.block_dict[self.domain_name]["Edges"].append((source_node, self.block_number))
+                self.CFG_file.write(str(source_node) + ' ' + str(self.block_number) + '\n')
+        except:
+            pass
         index = ctx.statement().start.tokenIndex
         new_code = self.logLine() + ';\n'
         self.token_stream_rewriter.insertBeforeIndex(index , new_code)
@@ -396,6 +407,7 @@ class CFGInstListener(CPP14_v2Listener):
     def exitSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
         self.block_stop = ctx.stop.line
         self.addNode()
+        self.switch_for_stack.pop()
         if not self.has_default_stack.pop():
             self.switch_junction_stack.append(self.switch_stack.pop())
             if not self.has_case_stack.pop():
@@ -543,13 +555,17 @@ class CFGInstListener(CPP14_v2Listener):
             self.has_jump_stack[-1] = True
         except:
             pass
-        label = ctx.getToken(lexer.Identifier , 0)
-        self.addGotoEdge(label)
+        label = ctx.Identifier().getText()
+        try:
+            self.addGotoEdge(label)
+        except:
+            try:
+                self.goto_dict[label] += [self.block_number]
+            except:
+                self.goto_dict[label] = [self.block_number]
 
 
     def exitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
-        self.block_stop = ctx.stop.line
-        self.addNode()
         initial_nodes_str = ' '.join(str(node) for node in self.initial_nodes)
         self.CFG_file.write("initial nodes:" + initial_nodes_str + '\n')
         self.final_nodes.add(self.block_number)
@@ -557,6 +573,10 @@ class CFGInstListener(CPP14_v2Listener):
         self.CFG_file.write("final nodes:" + final_nodes_str + '\n')
         print(self.block_dict)
         self.CFG_file.close()
+        func_graph = nx.Graph(self.block_dict[self.domain_name]["Edges"])
+        nx.draw(func_graph , with_labels=True)
+        plt.savefig(self.cfg_path + self.domain_name + '.png')
+        plt.close()
 
     def exitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """

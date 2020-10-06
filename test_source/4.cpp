@@ -5,7 +5,6 @@ using namespace std;
 int main()
 {
 	alii:
-	cout<<1;
 	int x = 0 , y =100;
 	int a[] = {0,1,2,3,4,5,6,7} ;
 	int n = 2 ;
