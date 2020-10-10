@@ -322,8 +322,8 @@ assignmentoperator
    ;
 
 expression
-   : assignmentexpression #expression1
-   | expression ',' assignmentexpression #expression2
+   : assignmentexpression
+   | expression ',' assignmentexpression
    ;
 
 constantexpression
@@ -333,14 +333,14 @@ constantexpression
 
 /*Statements*/
 statement
-   : labeledstatement #statement1
-   | attributespecifierseq? expressionstatement #statement2
-   | attributespecifierseq? compoundstatement #statement3
-   | attributespecifierseq? selectionstatement #statement4
-   | attributespecifierseq? iterationstatement #statement5
-   | attributespecifierseq? jumpstatement #statement6
-   | declarationstatement #statement7
-   | attributespecifierseq? tryblock #statement8
+   : labeledstatement
+   | attributespecifierseq? expressionstatement
+   | attributespecifierseq? compoundstatement
+   | attributespecifierseq? selectionstatement
+   | attributespecifierseq? iterationstatement
+   | attributespecifierseq? jumpstatement
+   | declarationstatement
+   | attributespecifierseq? tryblock
    ;
 
 labeledstatement
@@ -369,9 +369,9 @@ selectionstatement
    ;
 
 condition
-   : expression #condition1
-   | attributespecifierseq? declspecifierseq declarator '=' initializerclause #condition2
-   | attributespecifierseq? declspecifierseq declarator bracedinitlist #condition3
+   : expression
+   | attributespecifierseq? declspecifierseq declarator '=' initializerclause
+   | attributespecifierseq? declspecifierseq declarator bracedinitlist
    ;
 
 iterationstatement

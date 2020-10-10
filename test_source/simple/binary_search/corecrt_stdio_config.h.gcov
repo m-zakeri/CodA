@@ -1,0 +1,129 @@
+        -:    0:Source:D:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\corecrt_stdio_config.h
+        -:    0:Graph:bin_search.gcno
+        -:    0:Data:bin_search.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://
+        -:    2:// corecrt_stdio_config.h
+        -:    3://
+        -:    4://      Copyright (c) Microsoft Corporation. All rights reserved.
+        -:    5://
+        -:    6:// Per-module <stdio.h> configuration.
+        -:    7://
+        -:    8:#pragma once
+        -:    9:
+        -:   10:#include <corecrt.h>
+        -:   11:
+        -:   12:_CRT_BEGIN_C_HEADER
+        -:   13:
+        -:   14:#if !defined _NO_CRT_STDIO_INLINE && !_CRT_FUNCTIONS_REQUIRED
+        -:   15:    #define _NO_CRT_STDIO_INLINE
+        -:   16:#endif
+        -:   17:
+        -:   18:#if defined _NO_CRT_STDIO_INLINE
+        -:   19:    #undef _CRT_STDIO_INLINE
+        -:   20:    #define _CRT_STDIO_INLINE
+        -:   21:#elif !defined _CRT_STDIO_INLINE
+        -:   22:    #define _CRT_STDIO_INLINE __inline
+        -:   23:#endif
+        -:   24:
+        -:   25:#if !defined RC_INVOKED // RC has no target architecture
+        -:   26:    #if defined _M_IX86
+        -:   27:        #define _CRT_INTERNAL_STDIO_SYMBOL_PREFIX "_"
+        -:   28:    #elif defined _M_X64 || defined _M_ARM || defined _M_ARM64
+        -:   29:        #define _CRT_INTERNAL_STDIO_SYMBOL_PREFIX ""
+        -:   30:    #else
+        -:   31:        #error Unsupported architecture
+        -:   32:    #endif
+        -:   33:#endif
+        -:   34:
+        -:   35:
+        -:   36:
+        -:   37:// Predefine _CRT_STDIO_ISO_WIDE_SPECIFIERS to use ISO-conforming behavior for
+        -:   38:// the wide string printf and scanf functions (%s, %c, and %[] specifiers).
+        -:   39://
+        -:   40:// Predefine _CRT_STDIO_LEGACY_WIDE_SPECIFIERS to use VC++ 2013 and earlier behavior for
+        -:   41:// the wide string printf and scanf functions (%s, %c, and %[] specifiers).
+        -:   42://
+        -:   43:// Predefine _CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS when building code that does
+        -:   44:// not use these format specifiers without a length modifier and thus can be
+        -:   45:// used with either the legacy (default) or the conforming mode.  (This option
+        -:   46:// is intended for use by static libraries).
+        -:   47:#if !defined RC_INVOKED // _CRT_STDIO_LEGACY_WIDE_SPECIFIERS et al. are too long for rc
+        -:   48:    #if defined _CRT_STDIO_ISO_WIDE_SPECIFIERS
+        -:   49:        #if defined _CRT_STDIO_LEGACY_WIDE_SPECIFIERS
+        -:   50:            #error _CRT_STDIO_ISO_WIDE_SPECIFIERS and _CRT_STDIO_LEGACY_WIDE_SPECIFIERS cannot be defined together.
+        -:   51:        #endif
+        -:   52:
+        -:   53:        #if !defined _M_CEE_PURE
+        -:   54:            #pragma comment(lib, "iso_stdio_wide_specifiers")
+        -:   55:            #pragma comment(linker, "/include:" _CRT_INTERNAL_STDIO_SYMBOL_PREFIX "__PLEASE_LINK_WITH_iso_stdio_wide_specifiers.lib")
+        -:   56:        #endif
+        -:   57:    #elif defined _CRT_STDIO_LEGACY_WIDE_SPECIFIERS
+        -:   58:        #if !defined _M_CEE_PURE
+        -:   59:            #pragma comment(lib, "legacy_stdio_wide_specifiers")
+        -:   60:            #pragma comment(linker, "/include:" _CRT_INTERNAL_STDIO_SYMBOL_PREFIX "__PLEASE_LINK_WITH_legacy_stdio_wide_specifiers.lib")
+        -:   61:        #endif
+        -:   62:    #endif
+        -:   63:
+        -:   64:    #if defined __cplusplus && !defined _CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS
+        -:   65:        #ifdef _CRT_STDIO_ISO_WIDE_SPECIFIERS
+        -:   66:            #pragma detect_mismatch("_CRT_STDIO_ISO_WIDE_SPECIFIERS", "1")
+        -:   67:        #else
+        -:   68:            #pragma detect_mismatch("_CRT_STDIO_ISO_WIDE_SPECIFIERS", "0")
+        -:   69:        #endif
+        -:   70:    #endif
+        -:   71:#endif
+        -:   72:
+        -:   73:// If we're compiling mixed managed code, make sure these inline functions are
+        -:   74:// compiled as native to ensure that there is only one instance of each of the
+        -:   75:// function-local static variables.
+        -:   76:#if defined _M_CEE && !defined _M_CEE_PURE
+        -:   77:    #pragma managed(push, off)
+        -:   78:#endif
+        -:   79:
+        -:   80:#if _CRT_FUNCTIONS_REQUIRED
+        -:   81:    // This function must not be inlined into callers to avoid ODR violations.  The
+        -:   82:    // static local variable has different names in C and in C++ translation units.
+        -:   83:    _Check_return_ _Ret_notnull_
+        -:   84:    _CRT_INLINE_PURE_SECURITYCRITICAL_ATTRIBUTE
+        5:   85:    __declspec(noinline) __inline unsigned __int64* __CRTDECL __local_stdio_printf_options(void)
+        -:   86:    {
+        -:   87:        static unsigned __int64 _OptionsStorage;
+        5:   88:        return &_OptionsStorage;
+        -:   89:    }
+        -:   90:
+        -:   91:    // This function must not be inlined into callers to avoid ODR violations.  The
+        -:   92:    // static local variable has different names in C and in C++ translation units.
+        -:   93:    _Check_return_ _Ret_notnull_
+        -:   94:    _CRT_INLINE_PURE_SECURITYCRITICAL_ATTRIBUTE
+        7:   95:    __declspec(noinline) __inline unsigned __int64* __CRTDECL __local_stdio_scanf_options(void)
+        -:   96:    {
+        -:   97:        static unsigned __int64 _OptionsStorage;
+        7:   98:        return &_OptionsStorage;
+        -:   99:    }
+        -:  100:#endif
+        -:  101:
+        -:  102:#if defined _M_CEE && !defined _M_CEE_PURE
+        -:  103:    #pragma managed(pop)
+        -:  104:#endif
+        -:  105:
+        -:  106:#define _CRT_INTERNAL_LOCAL_PRINTF_OPTIONS (*__local_stdio_printf_options())
+        -:  107:#define _CRT_INTERNAL_LOCAL_SCANF_OPTIONS  (*__local_stdio_scanf_options ())
+        -:  108:
+        -:  109:
+        -:  110:
+        -:  111:#define _CRT_INTERNAL_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION (1ULL << 0)
+        -:  112:#define _CRT_INTERNAL_PRINTF_STANDARD_SNPRINTF_BEHAVIOR       (1ULL << 1)
+        -:  113:#define _CRT_INTERNAL_PRINTF_LEGACY_WIDE_SPECIFIERS           (1ULL << 2)
+        -:  114:#define _CRT_INTERNAL_PRINTF_LEGACY_MSVCRT_COMPATIBILITY      (1ULL << 3)
+        -:  115:#define _CRT_INTERNAL_PRINTF_LEGACY_THREE_DIGIT_EXPONENTS     (1ULL << 4)
+        -:  116:
+        -:  117:
+        -:  118:#define _CRT_INTERNAL_SCANF_SECURECRT                   (1ULL << 0)
+        -:  119:#define _CRT_INTERNAL_SCANF_LEGACY_WIDE_SPECIFIERS      (1ULL << 1)
+        -:  120:#define _CRT_INTERNAL_SCANF_LEGACY_MSVCRT_COMPATIBILITY (1ULL << 2)
+        -:  121:
+        -:  122:
+        -:  123:
+        -:  124:_CRT_END_C_HEADER
