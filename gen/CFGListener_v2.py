@@ -16,6 +16,11 @@ SWITCH_FOR = {
 class CFGInstListener(CPP14_v2Listener):
 
     def addNode(self):
+        try:
+            if not self.is_catch:
+                self.try_stack[-1].add(self.block_number)
+        except:
+            pass
         self.block_dict[self.domain_name]["Nodes"].append((self.block_number, self.block_start, self.block_stop))
 
     def addJunctionEdge(self):
@@ -40,10 +45,10 @@ class CFGInstListener(CPP14_v2Listener):
         self.select_decision_stack.append(self.block_number)
 
     def addIterateJunctionEdge(self):
-        source_node = self.iterate_junction_stack.pop()
-        dest_node = self.block_number
-        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
-        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+        for source_node in self.iterate_junction_stack[-1]:
+            dest_node = self.block_number
+            self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+            self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
     def addIterateEdge(self):
         source_node = self.block_number
@@ -57,12 +62,18 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
         self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
+    def addDoWhileInitEdge(self):
+        source_node = self.block_number
+        dest_node = source_node + 2
+        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+
     def addIterateJunc(self):
-        self.iterate_junction_stack.append(self.block_number)
+        self.iterate_junction_stack[-1].append(self.block_number)
 
     def addIterate(self):
         self.iterate_stack.append(self.block_number)
-        
+
     def addSwitchEdge(self):
         source_node = self.switch_stack[-1]
         dest_node = self.block_number
@@ -70,15 +81,15 @@ class CFGInstListener(CPP14_v2Listener):
         self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
     
     def addSwitchJunctionEdge(self):
-        source_node = self.switch_junction_stack.pop()
-        dest_node = self.block_number
-        self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
-        self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+        for source_node in self.switch_junction_stack[-1]:
+            dest_node = self.block_number
+            self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+            self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
         
     def addSwitch(self):
         self.switch_stack.append(self.block_number)
     def addSwitchJunc(self):
-        self.switch_junction_stack.append(self.block_number)
+        self.switch_junction_stack[-1].append(self.block_number)
 
     def addGotoEdge(self , label):
         source_node = self.block_number
@@ -92,9 +103,24 @@ class CFGInstListener(CPP14_v2Listener):
 
     def logLine(self):
         return 'logFile << "' + self.domain_name + ' ' + str(self.block_number) + '" << std::endl'
+
+    def addTryJunc(self):
+        self.try_junction_stack[-1].append(self.block_number)
+
+    def addTryEdge(self):
+        for source_node in self.try_stack[-1]:
+            dest_node = self.block_number
+            self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+            self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+
+    def addTryJuncEdge(self):
+        for source_node in self.try_junction_stack[-1]:
+            dest_node = self.block_number
+            self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node))
+            self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
+
     def __init__(self, common_token_stream: CommonTokenStream, number_of_tokens , directory_name):
         """
-
         :param common_token_stream:
         """
         self.cfg_path = 'CFGS/v2/' + directory_name + '/'
@@ -114,6 +140,9 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_jump_stack = []
         self.has_default_stack = []
         self.has_case_stack = []
+        self.try_stack = []
+        self.try_junction_stack = []
+        self.is_catch = False
         self.afterInsert = [''] * number_of_tokens
         self.initial_nodes = set()
         self.final_nodes = set()
@@ -127,6 +156,7 @@ class CFGInstListener(CPP14_v2Listener):
             raise TypeError('common_token_stream is None')
         # create graph
         self.CFG_graph = nx.Graph()
+
     def enterTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
         Creating and open a text file for logging the instrumentation result
@@ -137,6 +167,7 @@ class CFGInstListener(CPP14_v2Listener):
         new_code = '\n//in the name of allah\n#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
         self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
+    #function
     def enterFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         self.initial_nodes = set()
         self.final_nodes = set()
@@ -161,6 +192,60 @@ class CFGInstListener(CPP14_v2Listener):
         self.insertAfter(ctx)
         self.initial_nodes.add(self.block_number)
 
+    def enterFunctiontryblock(self, ctx:CPP14_v2Parser.FunctiontryblockContext): #try function
+        self.block_number = 1
+        self.block_start = ctx.start.line
+        self.has_jump_stack.append(False)
+        body = ctx.compoundstatement()
+        self.insertAfter(body)
+        self.initial_nodes.add(self.block_number)
+        self.try_stack.append(set())
+        self.try_junction_stack.append(list())
+
+    def enterTryblock(self, ctx:CPP14_v2Parser.TryblockContext):
+        self.has_jump_stack.append(False)
+        self.try_stack.append(set())
+        self.try_junction_stack.append(list())
+
+    def exitCompoundstatement(self, ctx:CPP14_v2Parser.CompoundstatementContext):
+        if isinstance(ctx.parentCtx , CPP14_v2Parser.TryblockContext):
+            self.has_jump_stack.pop()
+            self.block_stop = ctx.stop.line
+            self.addNode()
+            self.try_junction_stack[-1].append(self.block_number)
+        elif isinstance(ctx.parentCtx , CPP14_v2Parser.FunctiontryblockContext):
+            self.has_jump_stack.pop()
+            self.block_stop = ctx.stop.line
+            self.addNode()
+
+    def enterHandler(self, ctx:CPP14_v2Parser.HandlerContext):
+        self.is_catch = True
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        body = ctx.compoundstatement()
+        self.insertAfter(body)
+        self.addTryEdge()
+        self.has_jump_stack.append(False)
+
+    def exitHandler(self, ctx:CPP14_v2Parser.HandlerContext):
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        self.addTryJunc()
+        self.has_jump_stack.pop()
+
+    def exitTryblock(self, ctx:CPP14_v2Parser.TryblockContext):
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addTryJuncEdge()
+        self.try_junction_stack.pop()
+        self.try_stack.pop()
+        self.is_catch = False
+        new_code = '\n' + self.logLine() + ';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
+    def exitFunctiontryblock(self, ctx:CPP14_v2Parser.FunctiontryblockContext):
+        self.is_catch = False
+        self.try_stack.pop()
     #selection
     def enterSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context): #if
         self.block_stop = ctx.start.line
@@ -186,15 +271,18 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_default_stack.append(False)
         self.has_case_stack.append(False)
         self.switch_for_stack.append(SWITCH_FOR["switch"])
+        self.switch_junction_stack.append(list())
     
     def enterLabeledstatement1(self, ctx:CPP14_v2Parser.Labeledstatement1Context): #label
-        self.block_stop = ctx.start.line
-        self.addNode()
         try:
             if not self.has_jump_stack[-1]:
                 self.addInitEdge()
+                self.block_stop = ctx.start.line
+                self.addNode()
         except:
             self.addInitEdge()
+            self.block_stop = ctx.start.line
+            self.addNode()
         self.block_number += 1
         self.block_start = ctx.start.line
         label = ctx.Identifier().getText()
@@ -252,7 +340,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_stop = ctx.start.line
         self.addNode()
         self.addInitEdge()
-
+        self.iterate_junction_stack.append(list())
         self.block_number += 1
         self.block_start = ctx.start.line
         self.addIterateJunc()
@@ -264,7 +352,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_stop = ctx.start.line
         self.addNode()
         self.addInitEdge()
-
+        self.iterate_junction_stack.append(list())
         self.block_number += 1
         self.block_start = ctx.start.line
         self.addIterateJunc()
@@ -279,11 +367,25 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_jump_stack.append(False)
         self.block_stop = ctx.start.line
         self.addNode()
+        self.addDoWhileInitEdge()
+        self.iterate_junction_stack.append(list())
+
+        expression = ctx.expression()
+        self.block_number += 1
+        self.block_start = expression.start.line
+        self.block_stop = expression.stop.line
+        self.addNode()
+        self.addIterate()
+        self.addIterateJunc()
         self.addInitEdge()
+        new_code = self.logLine()
+        new_code += ' && ('
+        self.token_stream_rewriter.insertBeforeIndex(expression.start.tokenIndex, new_code)
+        new_code = ')'
+        self.token_stream_rewriter.insertAfter(expression.stop.tokenIndex, new_code)
 
         self.block_number += 1
         self.block_start = ctx.start.line
-        self.addIterate()
 
     def enterIterationstatement4(self, ctx:CPP14_v2Parser.Iterationstatement4Context): #range-for
         self.switch_for_stack.append(SWITCH_FOR["range_for"])
@@ -292,7 +394,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.addNode()
         self.addDecision()
         self.addInitEdge()
-
+        self.iterate_junction_stack.append(list())
         self.block_number += 1
         self.block_start = ctx.start.line
         self.addIterate()
@@ -305,14 +407,7 @@ class CFGInstListener(CPP14_v2Listener):
             new_code = ')'
             self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
 
-    def enterExpression(self, ctx:CPP14_v2Parser.ExpressionContext): #do-while condition
-        if isinstance(ctx.parentCtx, CPP14_v2Parser.Iterationstatement2Context):
-            new_code = self.logLine()
-            new_code += ' && ('
-            self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex,new_code)
-            new_code = ')'
-            self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex ,new_code)
-    
+
     def enterStatement(self, ctx:CPP14_v2Parser.StatementContext):
         """
         DFS traversal of a statement subtree, rooted at ctx.
@@ -348,6 +443,7 @@ class CFGInstListener(CPP14_v2Listener):
             # if there is a compound statement after the branchning condition:
             body = ctx.compoundstatement()
             if body != None:
+                print(ctx.start.line)
                 self.insertAfter(body)
             # if there is only one statement after the branchning condition then create a block.
             else:
@@ -362,7 +458,7 @@ class CFGInstListener(CPP14_v2Listener):
                 self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
     def exitStatement(self, ctx: CPP14_v2Parser.StatementContext):
-        if isinstance(ctx.parentCtx, CPP14_v2Parser.IterationstatementContext):
+        if isinstance(ctx.parentCtx, CPP14_v2Parser.IterationstatementContext): #loop
             self.addIterateEdge()
             self.block_stop = ctx.stop.line
             self.addNode()
@@ -371,7 +467,7 @@ class CFGInstListener(CPP14_v2Listener):
                 self.afterInsert[ctx.stop.tokenIndex] += new_code
 
         elif isinstance(ctx.parentCtx,
-                        (CPP14_v2Parser.Selectionstatement1Context, CPP14_v2Parser.Selectionstatement2Context)):
+                        (CPP14_v2Parser.Selectionstatement1Context, CPP14_v2Parser.Selectionstatement2Context)): # if
             self.block_stop = ctx.stop.line
             self.addNode()
             if not self.has_jump_stack.pop():
@@ -381,7 +477,7 @@ class CFGInstListener(CPP14_v2Listener):
                 self.afterInsert[ctx.stop.tokenIndex] += new_code
 
         elif isinstance(ctx.parentCtx,
-                        CPP14_v2Parser.Selectionstatement3Context):
+                        CPP14_v2Parser.Selectionstatement3Context): # switch
             if ctx.compoundstatement() == None:
                 new_code = '\n}'
                 self.afterInsert[ctx.stop.tokenIndex] += new_code
@@ -409,7 +505,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.addNode()
         self.switch_for_stack.pop()
         if not self.has_default_stack.pop():
-            self.switch_junction_stack.append(self.switch_stack.pop())
+            self.switch_junction_stack[-1].append(self.switch_stack.pop())
             if not self.has_case_stack.pop():
                 self.has_jump_stack.pop()
             elif not self.has_jump_stack.pop():
@@ -419,12 +515,8 @@ class CFGInstListener(CPP14_v2Listener):
 
         self.block_number += 1
         self.block_start = ctx.stop.line
-
-        while True:
-            try:
-                self.addSwitchJunctionEdge()
-            except:
-                break
+        self.addSwitchJunctionEdge()
+        self.switch_junction_stack.pop()
         new_code = '\n' +  self.logLine() +';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
 
@@ -432,14 +524,10 @@ class CFGInstListener(CPP14_v2Listener):
         self.iterate_stack.pop()
         self.switch_for_stack.pop()
         self.has_jump_stack.pop()
-
         self.block_number += 1
         self.block_start = ctx.stop.line
-        while True:
-            try:
-                self.addIterateJunctionEdge()
-            except:
-                break
+        self.addIterateJunctionEdge()
+        self.iterate_junction_stack.pop()
         new_code = '\n' +  self.logLine() +';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
 
@@ -447,31 +535,21 @@ class CFGInstListener(CPP14_v2Listener):
         self.iterate_stack.pop()
         self.switch_for_stack.pop()
         self.has_jump_stack.pop()
-
         self.block_number += 1
         self.block_start = ctx.stop.line
-        while True:
-            try:
-                self.addIterateJunctionEdge()
-            except:
-                break
+        self.addIterateJunctionEdge()
+        self.iterate_junction_stack.pop()
         new_code = '\n' +  self.logLine() +';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
 
     def exitIterationstatement2(self, ctx:CPP14_v2Parser.Iterationstatement2Context): #do-while
-        self.addIterateJunc()
-
         self.iterate_stack.pop()
         self.switch_for_stack.pop()
         self.has_jump_stack.pop()
-
         self.block_number += 1
         self.block_start = ctx.stop.line
-        while True:
-            try:
-                self.addIterateJunctionEdge()
-            except:
-                break
+        self.addIterateJunctionEdge()
+        self.iterate_junction_stack.pop()
         new_code = '\n' +  self.logLine() +';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
 
@@ -481,15 +559,11 @@ class CFGInstListener(CPP14_v2Listener):
         self.iterate_stack.pop()
         self.switch_for_stack.pop()
         self.has_jump_stack.pop()
-
         self.block_number += 1
         self.block_start = ctx.stop.line
         self.addDecisionEdge()
-        while True:
-            try:
-                self.addIterateJunctionEdge()
-            except:
-                break
+        self.addIterateJunctionEdge()
+        self.iterate_junction_stack.pop()
         new_code = '\n' +  self.logLine() +';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
 
@@ -564,6 +638,13 @@ class CFGInstListener(CPP14_v2Listener):
             except:
                 self.goto_dict[label] = [self.block_number]
 
+    def enterThrowexpression(self, ctx:CPP14_v2Parser.ThrowexpressionContext): #throw
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        try:
+            self.has_jump_stack[-1] = True
+        except:
+            pass
 
     def exitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         initial_nodes_str = ' '.join(str(node) for node in self.initial_nodes)

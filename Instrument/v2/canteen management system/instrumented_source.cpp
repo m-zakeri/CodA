@@ -1,9 +1,9 @@
-#include<iostream.h>
+#include<iostream>
 #include<conio.h>
-#include<string.h>
+#include<string>
 #include<stdio.h>
 #include<process.h>
-#include<iomanip.h>
+#include<iomanip>
 #include<dos.h>
 
 
@@ -11,18 +11,19 @@
 #include <fstream>
 std::ofstream logFile("log_file.txt");
 
+using namespace std;
+
 main()
 {
 logFile << "main 1" << std::endl;
 
-    clrscr();
     unsigned int sum,add,d,i,j,e,f,g,h,k,l,w,x,y,z;
     unsigned int bir=10,per=36,der=110,mur=8,par=110,cor=90,twr=1199, lur=17,tir=107,
                  rer=1499;
     int qubis=1000,abis=0,qupep=1000,apep=0,quden=110,aden=0,qumun=1000,amun=0,quperk=500,aperk=0,qucoc=400,acoc=0,qutit=100,atit=0,qulux=1000,alux=0,qutid=1000,atid=0,quree=300,aree=0;
     unsigned int m=0,n=0,o=0,p=0,q=0,r=0,s=0,t=0,u=0,v=0;
     char name[50],rank[10],pu,c[20],a[15],b[15],ok;
-    clrscr();
+    
     printf("\n +++++++++++++++++++++++++++++++++++++++*++++++++++++++++++++++++++++++++++++++");
     printf("\n +                                     ***                                    +");
     printf("\n +                                    *****                                   +");
@@ -74,8 +75,8 @@ logFile << "main 1" << std::endl;
     printf("\n +                                     ***   BY:-  iCBSE.com            +");
     printf("\n +++++++++++++++++++++++++++++++++++++++*++++++++++++++++++++++++++++++++++++++");
     getch();
-    clrscr();
-    cout< <"\n\n\t      w             w    e e e e e e e e    l            ";
+    
+    cout<<"\n\n\t      w             w    e e e e e e e e    l            ";
     cout<<"\n\n\t      w      w      w    e                  l            ";
     cout<<"\n\n\t      w     w w     w    e                  l            ";
     cout<<"\n\n\t      w    w   w    w    e e e e e e e e    l            ";
@@ -92,7 +93,7 @@ logFile << "main 1" << std::endl;
     cout<<"\n\n  c                  o             o    m      m m      m    e     ";
     cout<<"\n\n   c c c c c c c      o o o o o o o     m       m       m    e e e e e e e e    ";
     getch();
-    clrscr();
+    
 main:
     logFile << "main 2" << std::endl;
 ;
@@ -104,29 +105,29 @@ main:
     gets(rank);
     cout<<"\n SERVICE NO.:";
     cin>>a;
-    cout< <"\n SMART CARD NO.:";
+    cout<<"\n SMART CARD NO.:";
     cin>>b;
-    cout< <"\n PHONE NO.:";
+    cout<<"\n PHONE NO.:";
     cin>>c;
-    cout< <"\n ENTER BILL NO.:";
+    cout<<"\n ENTER BILL NO.:";
     cin>>i;
 again:
     logFile << "main 3" << std::endl;
 ;
-    clrscr();
-    cout< <"\n\n\n\n\1.MENU & PURCHASE";
+    
+    cout<<"\n\n\n\n\1.MENU & PURCHASE";
     cout<<"\n\n\n\2.DETAILS";
     cout<<"\n\n\n\3.NEW CUSTOMER";
     cout<<"\n\n\n\4.QUANTITY AVAILABLE";
     cout<<"\n\n\n\5.EXIT";
     cout<<"\n\n\nENTER YOUR CHOICE:";
     cin>>d;
-    clrscr();
+    
     switch(d)
     {
     case 1:
         logFile << "main 4" << std::endl;
-cout< <"\nITEMS\t\t\t\t\t\t\t      RATE(RS)";
+cout<<"\nITEMS\t\t\t\t\t\t\t      RATE(RS)";
         cout<<"\n\n\nBISCUTE\t\t\t\t\t\t\t\t10  ";
         cout<<"\n\nPEPSODENT\t\t\t\t\t\t\t36";
         cout<<"\n\nDENIM POWDER\t\t\t\t\t\t\t110   ";
@@ -143,165 +144,228 @@ cout<<"\n\n\nDO YOU WANT TO PURCHASE(Y/N):\n";
         cin>>pu;
         if(pu=='Y'||pu=='y')
         {
+logFile << "main 6" << std::endl;
+
             switch(pu)
             {
 case 1:
-            logFile << "main 6" << std::endl;
-clrscr();
+            
+            logFile << "main 7" << std::endl;
+cout<<"\n\n\n\t\t\t\tPURCHASE LIST";
 }
-logFile << "main 7" << std::endl;
+logFile << "main 8" << std::endl;
 
-            cout< <"\n\n\n\t\t\t\tPURCHASE LIST";
 bis:
-            logFile << "main 8" << std::endl;
+            logFile << "main 9" << std::endl;
 ;
             cout<<"\nBISCUTE(MAX 30): ";
             cin>>m;
 
             if(m>30)
             {
-                cout< <"Enter Quantity Smaller than 30";
+logFile << "main 10" << std::endl;
+
+                cout<<"Enter Quantity Smaller than 30";
                 getch();
                 goto bis;
             }
             else
-                abis=qubis-m;
+                {
+logFile << "main 11" << std::endl;
+abis=qubis-m;
+}
+logFile << "main 12" << std::endl;
+
 pep:
-            logFile << "main 9" << std::endl;
+            logFile << "main 13" << std::endl;
 ;
             cout<<"\nPEPSODENT(MAX 2): ";
             cin>>n;
             if(n>2)
             {
-                cout< <"Enter Quantity Smaller than 2";
+logFile << "main 14" << std::endl;
+
+                cout<<"Enter Quantity Smaller than 2";
                 getch();
                 goto pep;
             }
             else
-logFile << "main 10" << std::endl;
+                {
+logFile << "main 15" << std::endl;
+apep=qupep-n;
+}
+logFile << "main 16" << std::endl;
 
-                apep=qupep-n;
 den:
-            logFile << "main 11" << std::endl;
+            logFile << "main 17" << std::endl;
 ;
             cout<<"\nDENIM POWDER(MAX 2): ";
             cin>>o;
             if(o>2)
             {
-                cout< <"Enter Quantity Smaller then 2";
+logFile << "main 18" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 2";
                 getch();
                 goto den;
             }
             else
-                aden=quden-o;
-mun:
-logFile << "mun 1" << std::endl;
+                {
+logFile << "main 19" << std::endl;
+aden=quden-o;
+}
+logFile << "main 20" << std::endl;
 
-            ;
+mun:
+            logFile << "main 21" << std::endl;
+;
             cout<<"\nMUNCH(MAX 50): ";
             cin>>p;
 
             if(p>50)
             {
-                cout< <"Enter Quantity Smaller then 50";
+logFile << "main 22" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 50";
                 getch();
                 goto mun;
             }
             else
-                amun=qumun-p;
-park:
-logFile << "park 1" << std::endl;
+                {
+logFile << "main 23" << std::endl;
+amun=qumun-p;
+}
+logFile << "main 24" << std::endl;
 
-            ;
+park:
+            logFile << "main 25" << std::endl;
+;
             cout<<"\nPARK AVENUE PERFUME(MAX 2): ";
             cin>>q;
 
             if(q>2)
             {
-                cout< <"Enter Quantity Smaller then 2";
+logFile << "main 26" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 2";
                 getch();
                 goto park;
             }
             else
-                aperk=quperk-q;
-coco:
-logFile << "coco 1" << std::endl;
+                {
+logFile << "main 27" << std::endl;
+aperk=quperk-q;
+}
+logFile << "main 28" << std::endl;
 
-            ;
+coco:
+            logFile << "main 29" << std::endl;
+;
             cout<<"\nCOCONUT HAIR OIL(MAX 2): ";
             cin>>r;
 
             if(r>2)
             {
-                cout< <"Enter Quantity Smaller then 2";
+logFile << "main 30" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 2";
                 getch();
                 goto coco;
             }
             else
-                acoc=qucoc-r;
-titan:
-logFile << "titan 1" << std::endl;
+                {
+logFile << "main 31" << std::endl;
+acoc=qucoc-r;
+}
+logFile << "main 32" << std::endl;
 
-            ;
+titan:
+            logFile << "main 33" << std::endl;
+;
             cout<<"\nTITAN WATCH(MAX 2): ";
             cin>>s;
 
             if(s>2)
             {
-                cout< <"Enter Quantity Smaller then 2";
+logFile << "main 34" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 2";
                 getch();
 
                 goto titan;
             }
             else
-                atit=qutit-s;
-lux:
-logFile << "lux 1" << std::endl;
+                {
+logFile << "main 35" << std::endl;
+atit=qutit-s;
+}
+logFile << "main 36" << std::endl;
 
-            ;
+lux:
+            logFile << "main 37" << std::endl;
+;
             cout<<"\nLUX SOAP(MAX 10): ";
             cin>>t;
 
             if(t>10)
             {
-                cout< <"Enter Quantity Smaller then 10";
+logFile << "main 38" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 10";
                 getch();
                 goto lux;
             }
             else
-                alux=qulux-t;
-tid:
-logFile << "tid 1" << std::endl;
+                {
+logFile << "main 39" << std::endl;
+alux=qulux-t;
+}
+logFile << "main 40" << std::endl;
 
-            ;
+tid:
+            logFile << "main 41" << std::endl;
+;
             cout<<"\nTIDE(MAX 2): ";
             cin>>u;
 
             if(u>2)
             {
-                cout< <"Enter Quantity Smaller then 2";
+logFile << "main 42" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 2";
                 getch();
                 goto tid;
             }
             else
-                atid=qutid-u;
-ree:
-logFile << "ree 1" << std::endl;
+                {
+logFile << "main 43" << std::endl;
+atid=qutid-u;
+}
+logFile << "main 44" << std::endl;
 
-            ;
+ree:
+            logFile << "main 45" << std::endl;
+;
             cout<<"\nREEBOK SHOES(MAX 4): ";
             cin>>v;
 
             if(v>4)
             {
-                cout< <"Enter Quantity Smaller then 4";
+logFile << "main 46" << std::endl;
+
+                cout<<"Enter Quantity Smaller then 4";
                 getch();
                 goto ree;
             }
             else
-                aree=quree-v;
+                {
+logFile << "main 47" << std::endl;
+aree=quree-v;
+}
+logFile << "main 48" << std::endl;
+
             cout<<"\n";
-            clrscr();
+            
             cout<<"\n\n\n\n\n\n\t\t\t\tAFFWA CANTEEN\n";
             cout<<"\n\n\t\t\t\t  CASH MEMO\n";
             cout<<"\n\nBILL NO.:"<<i;
@@ -316,25 +380,75 @@ logFile << "ree 1" << std::endl;
             cout<<"\nITEMS"            <<setw(40)<<"QUANTITY"<<setw(35)<<"PRICE(Rs.)";
             cout<<"===============================================================================";
             if(m>0)
-                cout< <"\n\nBISCUTE"        <<setw(38)<<m<<setw(28)<<"Rs."<<m*bir;
+                {
+logFile << "main 49" << std::endl;
+cout<<"\n\nBISCUTE"        <<setw(38)<<m<<setw(28)<<"Rs."<<m*bir;
+}
+logFile << "main 50" << std::endl;
+
             if(n>0)
-                cout< <"\n\nPEPSODENT"        <<setw(36)<<n<<setw(28)<<"Rs."<<n*per;
+                {
+logFile << "main 51" << std::endl;
+cout<<"\n\nPEPSODENT"        <<setw(36)<<n<<setw(28)<<"Rs."<<n*per;
+}
+logFile << "main 52" << std::endl;
+
             if(o>0)
-                cout< <"\n\nDENIM POWDER"     <<setw(33)<<o<<setw(28)<<"Rs."<<o*der;
+                {
+logFile << "main 53" << std::endl;
+cout<<"\n\nDENIM POWDER"     <<setw(33)<<o<<setw(28)<<"Rs."<<o*der;
+}
+logFile << "main 54" << std::endl;
+
             if(p>0)
-                cout< <"\n\nMUNCH"            <<setw(40)<<p<<setw(28)<<"Rs."<<p*mur;
+                {
+logFile << "main 55" << std::endl;
+cout<<"\n\nMUNCH"            <<setw(40)<<p<<setw(28)<<"Rs."<<p*mur;
+}
+logFile << "main 56" << std::endl;
+
             if(q>0)
-                cout< <"\n\nPARK AVENUE PERFUME"<<setw(26)<<q<<setw(28)<<"Rs."<<q*par;
+                {
+logFile << "main 57" << std::endl;
+cout<<"\n\nPARK AVENUE PERFUME"<<setw(26)<<q<<setw(28)<<"Rs."<<q*par;
+}
+logFile << "main 58" << std::endl;
+
             if(r>0)
-                cout< <"\n\nCOCONUT HAIR OIL" <<setw(29)<<r<<setw(28)<<"Rs."<<r*cor;
+                {
+logFile << "main 59" << std::endl;
+cout<<"\n\nCOCONUT HAIR OIL" <<setw(29)<<r<<setw(28)<<"Rs."<<r*cor;
+}
+logFile << "main 60" << std::endl;
+
             if(s>0)
-                cout< <"\n\nTITAN WATCH"      <<setw(34)<<s<<setw(28)<<"Rs."<<s*twr;
+                {
+logFile << "main 61" << std::endl;
+cout<<"\n\nTITAN WATCH"      <<setw(34)<<s<<setw(28)<<"Rs."<<s*twr;
+}
+logFile << "main 62" << std::endl;
+
             if(t>0)
-                cout< <"\n\nLUX SOAP"         <<setw(37)<<t<<setw(28)<<"Rs."<<t*lur;
+                {
+logFile << "main 63" << std::endl;
+cout<<"\n\nLUX SOAP"         <<setw(37)<<t<<setw(28)<<"Rs."<<t*lur;
+}
+logFile << "main 64" << std::endl;
+
             if(u>0)
-                cout< <"\n\nTIDE"             <<setw(41)<<u<<setw(28)<<"Rs."<<u*tir;
+                {
+logFile << "main 65" << std::endl;
+cout<<"\n\nTIDE"             <<setw(41)<<u<<setw(28)<<"Rs."<<u*tir;
+}
+logFile << "main 66" << std::endl;
+
             if(v>0)
-                cout< <"\n\nREEBOK SHOES"     <<setw(33)<<v<<setw(28)<<"Rs."<<v*rer;
+                {
+logFile << "main 67" << std::endl;
+cout<<"\n\nREEBOK SHOES"     <<setw(33)<<v<<setw(28)<<"Rs."<<v*rer;
+}
+logFile << "main 68" << std::endl;
+
             e=m*bir;
             f=n*per;
             g=o*der;
@@ -351,18 +465,23 @@ logFile << "ree 1" << std::endl;
             cout<<"\nTOTAL:"<<setw(40)<<add<<setw(27)<<"Rs."<<sum;
             cout<<"\n\nTHANK YOU .\t\t\t     VISIT US AGAIN\n";
             getch();
-            clrscr();
+            
             goto again;
         }
         else
         {
+logFile << "main 69" << std::endl;
+
             goto again;
 
         }
+logFile << "main 70" << std::endl;
+
 
 
     case 2:
-        cout<<"\n\n\n\n\n\t\t\t\tCANTEEN DETAILS";
+        logFile << "main 71" << std::endl;
+cout<<"\n\n\n\n\n\t\t\t\tCANTEEN DETAILS";
         cout<<"\n\n#TIMING:\n\n 11 AM TO 02 PM \n 03 PM TO 05 PM";
         cout<<"\n\n#CANTEEN WILL CLOSED ON TUESDAY";
         cout<<"\n\n#GOODS ONCE SOLD WILL NOT BE EXCHANGED/REPLACED";
@@ -370,14 +489,18 @@ logFile << "ree 1" << std::endl;
         cout<<"\n\n#COLLECT YOUR SMART CARD & BILL AFTER PAYMENT";
         cout<<"\n\n#DO NOT BREAK ANY CANTEEN ITEMS";
         getch();
-        clrscr();
+        
         goto again;
     case 3:
-        goto main;
+        logFile << "main 72" << std::endl;
+goto main;
     case 4:
-        if(m>0||n>0||o>0||p>0||q>0||r>0||s>0||t>0||u>0||v>0)
+        logFile << "main 73" << std::endl;
+if(m>0||n>0||o>0||p>0||q>0||r>0||s>0||t>0||u>0||v>0)
         {
-            cout< <"\n\t\t\tItems Avaliable in Canteen.\n\n\n";
+logFile << "main 74" << std::endl;
+
+            cout<<"\n\t\t\tItems Avaliable in Canteen.\n\n\n";
             cout<<"===============================================================================";
             cout<<"\nITEMS"            <<setw(40)<<"QUANTITY";
             cout<<"\n===============================================================================";
@@ -397,6 +520,8 @@ logFile << "ree 1" << std::endl;
         }
         else
         {
+logFile << "main 75" << std::endl;
+
             {
                 cout<<"\n\t\t\tItems Avaliable in Canteen.\n\n\n";
                 cout<<"===============================================================================";
@@ -418,40 +543,45 @@ logFile << "ree 1" << std::endl;
 
             }
         case 5:
-            cout<<"\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            logFile << "main 76" << std::endl;
+cout<<"\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS";
-            sleep(1);
-            clrscr();
+            
+            
             cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\t\t\t\t   THANKS\n\n\n\t\t\t\tPress any key to Exit.......";
             getch();
             exit(0);
         default:
-            cout<<"Your choice is wrong";
+            logFile << "main 77" << std::endl;
+cout<<"Your choice is wrong";
             getch();
             goto again;
         }
+logFile << "main 78" << std::endl;
+
 //getch();
 // return 0;
     }
+logFile << "main 79" << std::endl;
+
 
 }

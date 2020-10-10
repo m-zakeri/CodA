@@ -8,7 +8,7 @@ from antlr4 import *
 from pathlib import Path
 import os
 # input_path=input("please write the source code path:\n")
-input_path = 'test_source/student_projects/telephone billing.cpp'
+input_path = 'test_source/3.cpp'
 f = open(input_path, 'r')
 name = Path(f.name).stem
 cfg_path = 'CFGS/v2/' + name
@@ -33,6 +33,7 @@ token_stream = CommonTokenStream(lexer)
 parser = CPP14_v2Parser(token_stream)
 
 pars_tree = parser.translationunit()
+
 lexer.reset()
 number_of_tokens = len(lexer.getAllTokens())
 cfg_listener = CFGInstListener(token_stream , number_of_tokens , name)
