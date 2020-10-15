@@ -205,10 +205,18 @@ class CFGInstListener(CPP14_v2Listener):
         self.try_junction_stack.append(list())
 
     def enterTryblock(self, ctx:CPP14_v2Parser.TryblockContext):
+        self.is_catch = True
+        self.block_stop = ctx.start.line
+        self.addNode()
+        self.addInitEdge()
+        self.is_catch = False
         self.has_jump_stack.append(False)
         self.try_stack.append(set())
         self.try_junction_stack.append(list())
-
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        body = ctx.compoundstatement()
+        self.insertAfter(body)
     def exitCompoundstatement(self, ctx:CPP14_v2Parser.CompoundstatementContext):
         if isinstance(ctx.parentCtx , CPP14_v2Parser.TryblockContext):
             self.has_jump_stack.pop()

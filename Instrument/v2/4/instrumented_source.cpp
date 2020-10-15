@@ -74,39 +74,41 @@ logFile << "2 17" << std::endl;
 
 	
 	try{
+logFile << "2 18" << std::endl;
+
 		cout<<"ya_hosein";
 		do 
 		{
-logFile << "2 19" << std::endl;
+logFile << "2 20" << std::endl;
 switch (n)
 		{
-			label: logFile << "2 20" << std::endl;
+			label: logFile << "2 21" << std::endl;
 cout<<"ya_zahra";
 			
 			case 1:
-				logFile << "2 21" << std::endl;
+				logFile << "2 22" << std::endl;
 continue;
 			case 2:
-				logFile << "2 22" << std::endl;
+				logFile << "2 23" << std::endl;
 cout<<"ya_ali"<<endl;
 			case 3:
-				logFile << "2 23" << std::endl;
+				logFile << "2 24" << std::endl;
 int h = 0;
 				cout<<"ya_allah"<<endl;
 		}
-logFile << "2 24" << std::endl;
+logFile << "2 25" << std::endl;
 
 }
-		while (logFile << "2 18" << std::endl && (n <4));
-logFile << "2 25" << std::endl;
+		while (logFile << "2 19" << std::endl && (n <4));
+logFile << "2 26" << std::endl;
 
 	}
 	catch (int e){
-logFile << "2 26" << std::endl;
+logFile << "2 27" << std::endl;
 
 		cout<<"ya_abalfazl";
 	}
-logFile << "2 27" << std::endl;
+logFile << "2 28" << std::endl;
 
 
 	cout<<y<<endl;
