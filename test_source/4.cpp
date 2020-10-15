@@ -22,12 +22,11 @@ int main()
 			cout<<1;
 			
 		if (i<10)
-			continue;
-		for (int j =0;j<n;j++)
-			if (j<3)
-				cout<<2;
-			else
-				break;
+			for (int j =0;j<n;j++)
+				if (j<3)
+					cout<<2;
+				else
+					break;
 	}
 	
 	try{
@@ -45,6 +44,7 @@ int main()
 				int h = 0;
 				cout<<"ya_allah"<<endl;
 		}
+		while (n <4);
 	}
 	catch (int e){
 		cout<<"ya_abalfazl";
