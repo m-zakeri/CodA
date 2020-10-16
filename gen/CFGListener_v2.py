@@ -680,11 +680,8 @@ class CFGInstListener(CPP14_v2Listener):
         plt.savefig(self.cfg_path + self.domain_name + '.png')
         plt.close()
 
-        graph_json = open(self.cfg_path + 'cfg.json' , 'w')
+        graph_json = open(self.cfg_path + self.domain_name + '.json' , 'w')
         json.dump(self.block_dict , graph_json)
-
-        functions_json = open(self.cfg_path + 'functions.json' , 'w')
-        json.dump(self.function_dict , functions_json)
 
     def exitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
@@ -697,6 +694,9 @@ class CFGInstListener(CPP14_v2Listener):
                 self.token_stream_rewriter.insertAfter(i , self.afterInsert[i])
         self.instrumented_source.write(self.token_stream_rewriter.getDefaultText())
         self.instrumented_source.close()
+
+        functions_json = open(self.cfg_path + 'functions.json', 'w')
+        json.dump(self.function_dict, functions_json)
 
     def enterDeclarator(self, ctx: CPP14_v2Parser.DeclaratorContext):
         pass

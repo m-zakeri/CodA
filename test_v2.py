@@ -7,6 +7,7 @@ from graph import Graph
 from antlr4 import *
 from pathlib import Path
 import os
+import json
 # input_path=input("please enter the source code path:\n")
 input_path = 'test_source/4.cpp'
 f = open(input_path, 'r')
@@ -50,11 +51,11 @@ while True:
         cfg = Graph(cfg_file)
         cfg.computePrimePaths()
         for j in range(len(cfg.primePaths)):
-            print( j+1 , cfg.primePaths[j])
-
+            print(j+1 , cfg.primePaths[j])
         function_prime_paths[i] = cfg.primePaths
         i += 1
     except Exception as e:
         break
-print(function_prime_paths)
+primepaths_json = open(cfg_path + '/primepaths.json' , 'w')
+json.dump(function_prime_paths , primepaths_json)
 #input("please enter log file dir:")
