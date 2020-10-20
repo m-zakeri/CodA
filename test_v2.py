@@ -8,8 +8,38 @@ from antlr4 import *
 from pathlib import Path
 import os
 import json
+
+def checkCover(primepath , exepath):
+    exe_length = len(exepath)
+    prime_length = len(primepath)
+    for i in range(exe_length - prime_length + 1):
+        j = 0
+        k = 0
+        if exepath[i+j] == primepath[k]:
+            j += 1
+            k += 1
+            while k < prime_length and i+j < exe_length:
+                if exepath[i+j] == primepath[k]: # tour directly
+                    j += 1
+                    k += 1
+                elif primepath[k-1] in exepath[i+j:]: # tour with sidetrip
+                    j += exepath[i+j:].index(primepath[k-1])+1
+                elif primepath[k] in exepath[i+j:]: # tour with detour
+                    j += exepath[i+j:].index(primepath[k])
+                    k += 1
+                else:
+                    break
+
+            if k == prime_length:
+                return True
+
+    return False
+
+
+
 # input_path=input("please enter the source code path:\n")
 input_path = 'test_source/4.cpp'
+test_cases_dir = 'test_source/4'
 f = open(input_path, 'r')
 name = Path(f.name).stem
 cfg_path = 'CFGS/v2/' + name
@@ -58,4 +88,53 @@ while True:
         break
 primepaths_json = open(cfg_path + '/primepaths.json' , 'w')
 json.dump(function_prime_paths , primepaths_json)
-#input("please enter log file dir:")
+
+i = 1
+instrument_path = 'Instrument\\v2\\' + name
+instrumented_source = instrument_path + '\instrumented_source.cpp'
+instrumented_exe = instrument_path + '\instrumented_source.exe'
+log_file_dir = 'log_file.txt'
+executed_paths = {}
+primepaths_coverage = {}
+os.system("g++ {0} -o {1} -std=c++11".format(instrumented_source , instrumented_exe))
+while True:
+    try:
+        test_case_file = test_cases_dir + '/' + str(i) + '.txt'
+        open(test_case_file , 'r')
+        executed_paths[i] = {}
+        primepaths_coverage[i] = {}
+        os.system("{0} < {1}".format(instrumented_exe, test_case_file))
+        log_file = open( log_file_dir , 'r')
+        log_lines = log_file.readlines()
+        for line in log_lines:
+            f_code , block = (int(x) for x in line.split(' '))
+            try:
+                executed_paths[i][f_code].append(block)
+            except:
+                executed_paths[i][f_code] = [block]
+        print(executed_paths)
+        for j in executed_paths[i]:
+            primepaths_coverage[i][j] = list()
+            primes = function_prime_paths[j]
+            for path in primes:
+                if checkCover(path , executed_paths[i][j]):
+                    primepaths_coverage[i][j].append(1)
+                else:
+                    primepaths_coverage[i][j].append(0)
+        i += 1
+    except Exception as e:
+        break
+
+percent_coverage = {}
+for testcase in primepaths_coverage:
+    percent_coverage[testcase] = {}
+    for function in primepaths_coverage[testcase]:
+        percent_coverage[testcase][function] = (sum(primepaths_coverage[testcase][function])
+                                                / len(primepaths_coverage[testcase][function])) * 100
+
+exepath_file = open(instrument_path + '/exepaths.json', 'w')
+json.dump(executed_paths, exepath_file)
+primepaths_coverage_file = open(instrument_path + '/primepaths.json' , 'w')
+json.dump(primepaths_coverage , primepaths_coverage_file)
+percent_coverage_file = open(instrument_path + '/CoveragePercent.json' , 'w')
+json.dump(percent_coverage , percent_coverage_file)

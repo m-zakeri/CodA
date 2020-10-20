@@ -95,6 +95,7 @@ cout<<"ya_ali"<<endl;
 				logFile << "2 24" << std::endl;
 int h = 0;
 				cout<<"ya_allah"<<endl;
+				n++;
 		}
 logFile << "2 25" << std::endl;
 

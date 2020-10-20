@@ -43,6 +43,7 @@ int main()
 			case 3:
 				int h = 0;
 				cout<<"ya_allah"<<endl;
+				n++;
 		}
 		while (n <4);
 	}
