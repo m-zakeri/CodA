@@ -65,11 +65,11 @@ def checkCoverWithSideAndDetour(primepath , exepath):
                 if exepath[i+j] == primepath[k]: # tour directly
                     j += 1
                     k += 1
-                elif primepath[k-1] in exepath[i+j:]: # tour with sidetrip
-                    j += exepath[i+j:].index(primepath[k-1])+1
                 elif primepath[k] in exepath[i+j:]: # tour with detour
                     j += exepath[i+j:].index(primepath[k])
                     k += 1
+                elif primepath[k-1] in exepath[i+j:]: # tour with sidetrip
+                    j += exepath[i+j:].index(primepath[k-1])+1
                 else:
                     break
             if k == prime_length:
@@ -114,18 +114,18 @@ walker.walk(cfg_listener, pars_tree)
 #compute primepaths
 function_prime_paths = {}
 function_logs = {}
-i = 1
-while True:
+functions_json = open(cfg_path + '/functions.json', 'r')
+function_dict = json.load(functions_json)
+for f_code in function_dict:
     try:
-        cfg_file = open(cfg_path + '/' + str(i) + '.txt', 'r')
+        cfg_file = open(cfg_path + '/' + f_code + '.txt', 'r')
         cfg = Graph(cfg_file)
         cfg.computePrimePaths()
         for j in range(len(cfg.primePaths)):
             print(j+1 , cfg.primePaths[j])
-        function_prime_paths[i] = cfg.primePaths
-        i += 1
+        function_prime_paths[f_code] = cfg.primePaths
     except Exception as e:
-        break
+        pass
 primepaths_json = open(cfg_path + '/primepaths.json' , 'w')
 json.dump(function_prime_paths , primepaths_json)
 
@@ -136,40 +136,83 @@ instrumented_exe = instrument_path + '\instrumented_source.exe'
 log_file_dir = 'log_file.txt'
 executed_paths = {}
 primepaths_coverage = {}
-i = 1
 os.system("g++ {0} -o {1} -std=c++11".format(instrumented_source , instrumented_exe))
 test_case_files = [test_file for test_file in os.listdir(test_cases_dir)
                   if os.path.isfile(os.path.join(test_cases_dir , test_file))]
+
+side_and_de = 'with sidetrip and detour'
+side = 'with sidetrip'
+detour = 'with detour'
+
+primepaths_coverage[side_and_de] = {}
+primepaths_coverage[side] = {}
+primepaths_coverage[detour] = {}
+
+for f_code in function_dict:
+    executed_paths[f_code] = {}
+    primepaths_coverage[side_and_de][f_code] = {}
+    primepaths_coverage[side][f_code] = {}
+    primepaths_coverage[detour][f_code] = {}
+
 for test_case_file in  test_case_files:
+    for f_code in function_dict:
+        executed_paths[f_code][test_case_file] = list()
+        primepaths_coverage[side_and_de][f_code][test_case_file] = list()
+        primepaths_coverage[side][f_code][test_case_file] = list()
+        primepaths_coverage[detour][f_code][test_case_file] = list()
+
     open(test_cases_dir + test_case_file , 'r')
-    executed_paths[i] = {}
-    primepaths_coverage[i] = {}
     os.system("{0} < {1}".format(instrumented_exe, test_cases_dir + test_case_file))
     log_file = open( log_file_dir , 'r')
     log_lines = log_file.readlines()
     for line in log_lines:
-        f_code , block = (int(x) for x in line.split(' '))
-        try:
-            executed_paths[i][f_code].append(block)
-        except:
-            executed_paths[i][f_code] = [block]
-    print(executed_paths)
-    for j in executed_paths[i]:
-        primepaths_coverage[i][j] = list()
-        primes = function_prime_paths[j]
+        f_code , block = (x for x in line.split(' '))
+        block = int(block)
+        executed_paths[f_code][test_case_file].append(block)
+
+    for f_code in function_dict:
+        primes = function_prime_paths[f_code]
         for path in primes:
-            if checkCoverWithSideAndDetour(path , executed_paths[i][j]):
-                primepaths_coverage[i][j].append(1)
+            #with sidetrip and detour
+            if checkCoverWithSideAndDetour(path , executed_paths[f_code][test_case_file]):
+                primepaths_coverage[side_and_de][f_code][test_case_file].append(1)
             else:
-                primepaths_coverage[i][j].append(0)
-    i += 1
+                primepaths_coverage[side_and_de][f_code][test_case_file].append(0)
+            #with sidetrip
+            if checkCoverWithSidetour(path, executed_paths[f_code][test_case_file]):
+                primepaths_coverage[side][f_code][test_case_file].append(1)
+            else:
+                primepaths_coverage[side][f_code][test_case_file].append(0)
+            #with detour
+            if checkCoverWithDetour(path, executed_paths[f_code][test_case_file]):
+                primepaths_coverage[detour][f_code][test_case_file].append(1)
+            else:
+                primepaths_coverage[detour][f_code][test_case_file].append(0)
 
 percent_coverage = {}
-for testcase in primepaths_coverage:
-    percent_coverage[testcase] = {}
-    for function in primepaths_coverage[testcase]:
-        percent_coverage[testcase][function] = (sum(primepaths_coverage[testcase][function])
-                                                / len(primepaths_coverage[testcase][function])) * 100
+for f_code in function_dict:
+    percent_coverage[side_and_de] = {}
+    percent_coverage[side] = {}
+    percent_coverage[detour] = {}
+    if len(function_prime_paths[f_code]) > 0:
+        total_cover = [0] * len(function_prime_paths[f_code])
+        for testcase in primepaths_coverage[side_and_de][f_code]:
+            total_cover = [x or y for x,y in zip(total_cover,primepaths_coverage[side_and_de][f_code][testcase])]
+        percent_coverage[side_and_de][f_code] = (sum(total_cover) / len(total_cover) * 100)
+
+        total_cover = [0] * len(function_prime_paths[f_code])
+        for testcase in primepaths_coverage[side][f_code]:
+            total_cover = [x or y for x,y in zip(total_cover,primepaths_coverage[side][f_code][testcase])]
+        percent_coverage[side][f_code] = (sum(total_cover) / len(total_cover) * 100)
+
+        total_cover = [0] * len(function_prime_paths[f_code])
+        for testcase in primepaths_coverage[detour][f_code]:
+            total_cover = [x or y for x,y in zip(total_cover,primepaths_coverage[detour][f_code][testcase])]
+        percent_coverage[detour][f_code] = (sum(total_cover) / len(total_cover) * 100)
+    else:
+        percent_coverage[side_and_de][f_code] = 0
+        percent_coverage[side][f_code] = 0
+        percent_coverage[detour][f_code] = 0
 
 exepath_file = open(instrument_path + '/exepaths.json', 'w')
 json.dump(executed_paths, exepath_file)

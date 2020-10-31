@@ -27,6 +27,7 @@ class Graph:
         final_line = lines[-1]
         final_nodes = set(int(x) for x in final_line.split(':')[1].split(' '))
         self.finals = final_nodes
+        self.nodes.update(self.finals)
 
     def reachHead(self , path):
         first = path[0]
@@ -63,7 +64,7 @@ class Graph:
             for path in try_paths:
                 if path[0] == path[-1] and len(path) >= 2: #prime path
                     self.primePaths.append(path)
-                elif self.reachEnd(path) and len(path) >= 2:
+                elif self.reachEnd(path):
                     if self.reachHead(path): #prime path
                         self.primePaths.append(path)
                 else: #extendable path

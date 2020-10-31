@@ -100,7 +100,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
 
     def logLine(self):
-        return 'logFile << "' + self.domain_name + ' ' + str(self.block_number) + '" << std::endl'
+        return 'logFile << "' + str(self.domain_name) + ' ' + str(self.block_number) + '" << std::endl'
 
     def addTryJunc(self , Type = 'flow'):
         self.try_junction_stack[-1].append((self.block_number,Type))
@@ -127,7 +127,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_number = 0
         self.block_start = 0
         self.block_stop = 0
-        self.domain_name = ""
+        self.domain_name = 0
         self.function_dict = {}
         self.select_junction_stack = []
         self.select_decision_stack = []
@@ -166,7 +166,7 @@ class CFGInstListener(CPP14_v2Listener):
         log_path = self.instrument_path + "log_file.txt"
         new_code = '\n//in the name of allah\n#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
         self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
-        self.domain_name = '0'
+        self.domain_name = 0
 
     #function
     def enterFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
@@ -174,13 +174,13 @@ class CFGInstListener(CPP14_v2Listener):
         self.final_nodes = set()
         temp = ctx.declarator().getText().replace('~', "destructor")
         function_name = ''.join(c for c in temp if c.isalnum())
-        self.domain_name = str(int(self.domain_name) + 1)
+        self.domain_name += 1
         self.function_dict[self.domain_name] = (function_name , ctx.start.line)
         self.block_dict[self.domain_name] = {
             "Nodes": [],
             "Edges": []
         }
-        self.CFG_file = open(self.cfg_path + self.domain_name + '.txt', 'w')
+        self.CFG_file = open(self.cfg_path + str(self.domain_name) + '.txt', 'w')
 
 
     def enterFunctionbody1(self, ctx:CPP14_v2Parser.Functionbody1Context): #normal function
@@ -676,12 +676,17 @@ class CFGInstListener(CPP14_v2Listener):
         self.CFG_file.write("final nodes:" + final_nodes_str + '\n')
         print(self.block_dict)
         self.CFG_file.close()
-        func_graph = nx.Graph([(s,d,{'type':T}) for s,d,T in self.block_dict[self.domain_name]["Edges"]])
-        nx.draw(func_graph , with_labels=True)
-        plt.savefig(self.cfg_path + self.domain_name + '.png')
+        func_graph = nx.Graph()
+        func_graph.add_nodes_from([n for n,s,e in self.block_dict[self.domain_name]["Nodes"]])
+        func_graph.add_edges_from([(s,d) for s,d,T in self.block_dict[self.domain_name]["Edges"]])
+        edge_labels = {}
+        for s,d,T in self.block_dict[self.domain_name]["Edges"]:
+            edge_labels[(s,d)] = T
+        nx.draw(func_graph , pos=nx.spring_layout(func_graph) , with_labels=True)
+        plt.savefig(self.cfg_path + str(self.domain_name) + '.png')
         plt.close()
 
-        graph_json = open(self.cfg_path + self.domain_name + '.json' , 'w')
+        graph_json = open(self.cfg_path + str(self.domain_name) + '.json' , 'w')
         json.dump(self.block_dict , graph_json)
 
     def exitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
