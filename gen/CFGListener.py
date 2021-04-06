@@ -184,11 +184,6 @@ class CFGInstListener(CPP14_v2Listener):
 
 
     def enterFunctionbody1(self, ctx:CPP14_v2Parser.Functionbody1Context): #normal function
-        """
-        Insert a prob at the beginning of the function
-        :param ctx:
-        :return:
-        """
         self.block_number = 1
         self.block_start = ctx.start.line
         self.has_jump_stack.append(False)
@@ -228,7 +223,6 @@ class CFGInstListener(CPP14_v2Listener):
             self.has_jump_stack.pop()
             self.block_stop = ctx.stop.line
             self.addNode()
-
     def enterHandler(self, ctx:CPP14_v2Parser.HandlerContext):
         self.is_catch = True
         self.block_number += 1
@@ -237,13 +231,11 @@ class CFGInstListener(CPP14_v2Listener):
         self.insertAfter(body)
         self.addTryEdges()
         self.has_jump_stack.append(False)
-
     def exitHandler(self, ctx:CPP14_v2Parser.HandlerContext):
         self.block_stop = ctx.stop.line
         self.addNode()
         self.addTryJunc()
         self.has_jump_stack.pop()
-
     def exitTryblock(self, ctx:CPP14_v2Parser.TryblockContext):
         self.block_number += 1
         self.block_start = ctx.stop.line
@@ -253,7 +245,6 @@ class CFGInstListener(CPP14_v2Listener):
         self.is_catch = False
         new_code = '\n' + self.logLine() + ';\n'
         self.afterInsert[ctx.stop.tokenIndex] += new_code
-
     def exitFunctiontryblock(self, ctx:CPP14_v2Parser.FunctiontryblockContext):
         self.is_catch = False
         self.try_stack.pop()
@@ -262,17 +253,25 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_stop = ctx.start.line
         self.addNode()
         self.select_junction_stack.append(list())
+        self.addInitEdge()
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.block_stop = self.block_start
+        self.addNode()
         self.addDecision('True')
         self.addJunc('False')
-
     def enterSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context): #if-else
         self.block_stop = ctx.start.line
         self.addNode()
         self.select_junction_stack.append(list())
+        self.addInitEdge()
+        self.block_number += 1
+        self.block_start = ctx.start.line
+        self.block_stop = self.block_start
+        self.addNode()
         # decision stack first if part pop True then else part pop False
         self.addDecision('False')
         self.addDecision('True')
-
     def enterSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
         self.block_stop = ctx.start.line
         self.addNode()
@@ -282,7 +281,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_case_stack.append(False)
         self.switch_for_stack.append(SWITCH_FOR["switch"])
         self.switch_junction_stack.append(list())
-    
+
     def enterLabeledstatement1(self, ctx:CPP14_v2Parser.Labeledstatement1Context): #label
         try:
             if not self.has_jump_stack[-1]:
@@ -306,7 +305,7 @@ class CFGInstListener(CPP14_v2Listener):
         index = ctx.statement().start.tokenIndex
         new_code = self.logLine() + ';\n'
         self.token_stream_rewriter.insertBeforeIndex(index , new_code)
-        
+
     def enterLabeledstatement2(self, ctx:CPP14_v2Parser.Labeledstatement2Context): #case
         self.block_stop = ctx.start.line
         self.addNode()
@@ -324,7 +323,6 @@ class CFGInstListener(CPP14_v2Listener):
         index = ctx.statement().start.tokenIndex
         new_code = self.logLine() + ';\n'
         self.token_stream_rewriter.insertBeforeIndex(index, new_code)
-    
     def enterLabeledstatement3(self, ctx:CPP14_v2Parser.Labeledstatement3Context): #default
         self.block_stop = ctx.start.line
         self.addNode()
@@ -358,6 +356,7 @@ class CFGInstListener(CPP14_v2Listener):
         self.addIterateJunc('False')
         self.addIterate()
         self.addInitEdge('True')
+
     def enterIterationstatement3(self, ctx:CPP14_v2Parser.Iterationstatement3Context): # for
         self.switch_for_stack.append(SWITCH_FOR["for_while"])
         self.has_jump_stack.append(False)
@@ -414,13 +413,12 @@ class CFGInstListener(CPP14_v2Listener):
         self.block_start = ctx.start.line
         self.addIterate()
 
-    def enterCondition(self, ctx:CPP14_v2Parser.ConditionContext): # for and while condition
-        if isinstance(ctx.parentCtx , CPP14_v2Parser.IterationstatementContext):
-            new_code = self.logLine()
-            new_code += ' && ('
-            self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
-            new_code = ')'
-            self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
+    def enterCondition(self, ctx:CPP14_v2Parser.ConditionContext): # for and while and if condition
+        new_code = self.logLine()
+        new_code += ' && ('
+        self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
+        new_code = ')'
+        self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
 
 
     def enterStatement(self, ctx:CPP14_v2Parser.StatementContext):
@@ -457,7 +455,6 @@ class CFGInstListener(CPP14_v2Listener):
                 new_code = '{'
                 new_code += '\n' + self.logLine() + ';\n'
                 self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
-
         elif isinstance(ctx.parentCtx,
                       (CPP14_v2Parser.Selectionstatement1Context , CPP14_v2Parser.Selectionstatement2Context)):
             self.block_number += 1
