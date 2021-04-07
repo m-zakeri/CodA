@@ -414,11 +414,12 @@ class CFGInstListener(CPP14_v2Listener):
         self.addIterate()
 
     def enterCondition(self, ctx:CPP14_v2Parser.ConditionContext): # for and while and if condition
-        new_code = self.logLine()
-        new_code += ' && ('
-        self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
-        new_code = ')'
-        self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
+        if not isinstance(ctx.parentCtx, CPP14_v2Parser.Selectionstatement3Context):
+            new_code = self.logLine()
+            new_code += ' && ('
+            self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
+            new_code = ')'
+            self.token_stream_rewriter.insertAfter(ctx.stop.tokenIndex , new_code)
 
 
     def enterStatement(self, ctx:CPP14_v2Parser.StatementContext):

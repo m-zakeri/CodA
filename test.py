@@ -77,8 +77,8 @@ def checkCoverWithSideAndDetour(primepath , exepath):
     return False
 
 # input_path=input("please enter the source code path:\n")
-input_path = 'test_source/min_max.cpp'
-test_cases_dir = 'test_source/min_max/'
+input_path = 'test_source/4.cpp'
+test_cases_dir = 'test_source/4/'
 f = open(input_path, 'r')
 name = Path(f.name).stem
 cfg_path = 'CFGS/v2/' + name

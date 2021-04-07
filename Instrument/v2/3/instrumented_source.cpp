@@ -17,7 +17,7 @@ logFile << "1 1" << std::endl;
 logFile << "1 3" << std::endl;
 
     	cout<<"ya_hosein"<<endl;
-    	switch(n)
+    	switch(logFile << "1 3" << std::endl && (n))
     	{
     		case 1:
     			logFile << "1 4" << std::endl;
@@ -40,11 +40,13 @@ logFile << "1 7" << std::endl;
 logFile << "1 8" << std::endl;
 
 	
-	while (logFile << "1 9" << std::endl && (n<8))
+	while (n<8)
 	{
+logFile << "1 10" << std::endl;
+
 		n++;
 	}
-logFile << "1 10" << std::endl;
+logFile << "1 11" << std::endl;
 
 	return 0;
 	

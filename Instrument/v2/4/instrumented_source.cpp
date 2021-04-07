@@ -32,84 +32,84 @@ logFile << "2 3" << std::endl;
 	{
 logFile << "2 5" << std::endl;
 
-		if (i<8)
+		if (logFile << "2 6" << std::endl && (i<8))
 			{
-logFile << "2 6" << std::endl;
+logFile << "2 7" << std::endl;
 break;
 }
 		else
 			{
-logFile << "2 7" << std::endl;
+logFile << "2 8" << std::endl;
 cout<<1;
 }
-logFile << "2 8" << std::endl;
+logFile << "2 9" << std::endl;
 
 			
-		if (i<10)
+		if (logFile << "2 10" << std::endl && (i<10))
 			{
-logFile << "2 9" << std::endl;
-for (int j =0;logFile << "2 10" << std::endl && (j<n);j++)
-				{
 logFile << "2 11" << std::endl;
-if (j<3)
+for (int j =0;logFile << "2 12" << std::endl && (j<n);j++)
+				{
+logFile << "2 13" << std::endl;
+if (logFile << "2 14" << std::endl && (j<3))
 					{
-logFile << "2 12" << std::endl;
+logFile << "2 15" << std::endl;
 cout<<2;
 }
 				else
 					{
-logFile << "2 13" << std::endl;
+logFile << "2 16" << std::endl;
 break;
 }
-logFile << "2 14" << std::endl;
+logFile << "2 17" << std::endl;
 
 }
-logFile << "2 15" << std::endl;
+logFile << "2 18" << std::endl;
 
 }
-logFile << "2 16" << std::endl;
+logFile << "2 19" << std::endl;
 
 	}
-logFile << "2 17" << std::endl;
+logFile << "2 20" << std::endl;
 
 	
 	try{
-logFile << "2 18" << std::endl;
+logFile << "2 21" << std::endl;
 
 		cout<<"ya_hosein";
 		do 
 		{
-logFile << "2 20" << std::endl;
+logFile << "2 23" << std::endl;
 switch (n)
 		{
-			label: logFile << "2 21" << std::endl;
+			label: logFile << "2 24" << std::endl;
 cout<<"ya_zahra";
 			
 			case 1:
-				logFile << "2 22" << std::endl;
+				logFile << "2 25" << std::endl;
 continue;
 			case 2:
-				logFile << "2 23" << std::endl;
+				logFile << "2 26" << std::endl;
 cout<<"ya_ali"<<endl;
 			case 3:
-				logFile << "2 24" << std::endl;
+				logFile << "2 27" << std::endl;
 int h = 0;
 				cout<<"ya_allah"<<endl;
 				n++;
 		}
-logFile << "2 25" << std::endl;
+logFile << "2 28" << std::endl;
 
 }
-		while (logFile << "2 19" << std::endl && (n <4));
-logFile << "2 26" << std::endl;
+		while (logFile << "2 22" << std::endl && (n <4));
+logFile << "2 29" << std::endl;
 
 	}
 	catch (int e){
-logFile << "2 27" << std::endl;
+logFile << "2 30" << std::endl;
 
 		cout<<"ya_abalfazl";
 	}
-logFile << "2 28" << std::endl;
+logFile << "2 31" << std::endl;
 
 
 	cout<<y<<endl;
