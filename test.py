@@ -76,13 +76,14 @@ def checkCoverWithSideAndDetour(primepath , exepath):
                 return True
     return False
 
-# input_path=input("please enter the source code path:\n")
-input_path = 'test_source/4.cpp'
-test_cases_dir = 'test_source/4/'
+input_path=input("please enter the source code path:\n")
+test_cases_dir = input("please enter the testcases directory:\n")
+#input_path = 'test_source/try.cpp'
+#test_cases_dir = 'test_source/test/'
 f = open(input_path, 'r')
 name = Path(f.name).stem
-cfg_path = 'CFGS/v2/' + name
-instrument_path = 'Instrument/v2/' + name
+cfg_path = 'CFGS/' + name
+instrument_path = 'Instrument/' + name
 try:
     os.mkdir(cfg_path)
 except:
@@ -130,7 +131,7 @@ primepaths_json = open(cfg_path + '/primepaths.json' , 'w')
 json.dump(function_prime_paths , primepaths_json)
 
 #compute coverage
-instrument_path = 'Instrument\\v2\\' + name
+instrument_path = 'Instrument\\' + name
 instrumented_source = instrument_path + '\instrumented_source.cpp'
 instrumented_exe = instrument_path + '\instrumented_source.exe'
 log_file_dir = 'log_file.txt'
@@ -161,8 +162,8 @@ for test_case_file in  test_case_files:
         primepaths_coverage[side][f_code][test_case_file] = list()
         primepaths_coverage[detour][f_code][test_case_file] = list()
 
-    open(test_cases_dir + test_case_file , 'r')
-    os.system("{0} < {1}".format(instrumented_exe, test_cases_dir + test_case_file))
+    open(test_cases_dir + '/' + test_case_file , 'r')
+    os.system("{0} < {1}".format(instrumented_exe, test_cases_dir + '/' + test_case_file))
     log_file = open( log_file_dir , 'r')
     log_lines = log_file.readlines()
     for line in log_lines:
@@ -190,10 +191,10 @@ for test_case_file in  test_case_files:
                 primepaths_coverage[detour][f_code][test_case_file].append(0)
 
 percent_coverage = {}
+percent_coverage[side_and_de] = {}
+percent_coverage[side] = {}
+percent_coverage[detour] = {}
 for f_code in function_dict:
-    percent_coverage[side_and_de] = {}
-    percent_coverage[side] = {}
-    percent_coverage[detour] = {}
     if len(function_prime_paths[f_code]) > 0:
         total_cover = [0] * len(function_prime_paths[f_code])
         for testcase in primepaths_coverage[side_and_de][f_code]:

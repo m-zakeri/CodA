@@ -121,8 +121,8 @@ class CFGInstListener(CPP14_v2Listener):
         """
         :param common_token_stream:
         """
-        self.cfg_path = 'CFGS/v2/' + directory_name + '/'
-        self.instrument_path = 'Instrument/v2/' + directory_name + '/'
+        self.cfg_path = 'CFGS/' + directory_name + '/'
+        self.instrument_path = 'Instrument/' + directory_name + '/'
         self.block_dict = {}
         self.block_number = 0
         self.block_start = 0
@@ -685,7 +685,7 @@ class CFGInstListener(CPP14_v2Listener):
         plt.close()
 
         graph_json = open(self.cfg_path + str(self.domain_name) + '.json' , 'w')
-        json.dump(self.block_dict , graph_json)
+        json.dump(self.block_dict[self.domain_name] , graph_json)
 
     def exitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
