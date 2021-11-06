@@ -1,18 +1,18 @@
 """
-The script instrument CPP
-
+The script instrument CPP files
 
 
 
 """
-from antlr4 import TokenStreamRewriter
 
+__author__ = 'Morteza Zakeri'
+__version__= '0.1.0'
+
+
+from antlr4 import TokenStreamRewriter
 from gen.CPP14_v2Lexer import *
 from gen.CPP14_v2Parser import *
 from gen.CPP14_v2Listener import *
-
-__author__ = 'Morteza Zakeri'
-__version__= '0.2.0'
 
 
 class InstrumentationListener(CPP14_v2Listener):
