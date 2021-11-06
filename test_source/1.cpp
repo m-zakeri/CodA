@@ -1,8 +1,11 @@
-//in the name of allah
+/*
+The simplest CPP file for testing control-flow-graph extraction program
+*/
+
 #include<iostream>
 using namespace std;
 
-/*  */
+/* function number 1 */
 int main()
 {
 	int in;
@@ -14,6 +17,7 @@ int main()
 	return 0;
 }
 
+/* function number 2 */
 int f1()
 {
      int i=1;
@@ -26,7 +30,7 @@ int f1()
     return i;
 }
 
-
+/* function number 3 */
 int f2()
 {
      int i=1;
