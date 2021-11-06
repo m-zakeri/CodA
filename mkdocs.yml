@@ -1,0 +1,44 @@
+site_name: OpenUnderstand Docs (v0.1.0dev)
+site_url: https://m-zakeri.github.io/CodA
+repo_url: https://github.com/m-zakeri/CodA
+site_description: Automated Source Code Refactoring Toolkit
+site_author: Morteza Zakeri
+copyright: © 2020-2022 CodA project
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: orange
+      accent: teal
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Dark mode
+    - scheme: slate
+      primary: orange
+      accent: teal
+      toggle:
+        icon: material/toggle-switch
+        name: Light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - import os
+          selection:
+            members: True
+
+nav:
+    - Home: index.md
+    - Benchmarks: benchmarks.md
+    - Tutorials:
+        - ANTLR basics: antlr_basics.md
+        - Program instrumentation: tutorials/program_instrumentation.md
+        - Source code metrics computation: tutorials/metrics_computation.md
+    - Development proposals:
+        - Core program analysis development: proposals/core_program_analysis_development.md
+    - Issue tracker: 'https://github.com/m-zakeri/CodA/issues'
