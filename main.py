@@ -1,9 +1,12 @@
-# in the name of allah
+"""
+CodA main file
+
+"""
 
 from analyse.control_flow_graph import CFGInstListener
 from gen.CPP14_v2Lexer import CPP14_v2Lexer
 from gen.CPP14_v2Parser import CPP14_v2Parser
-from graph import Graph
+from analyse.prime_path import ControlFlowGraph
 from antlr4 import *
 from pathlib import Path
 import os
@@ -125,7 +128,7 @@ function_dict = json.load(functions_json)
 for f_code in function_dict:
     try:
         cfg_file = open(cfg_path + '/' + f_code + '.txt', 'r')
-        cfg = Graph(cfg_file)
+        cfg = ControlFlowGraph(cfg_file)
         cfg.computePrimePaths()
         for j in range(len(cfg.primePaths)):
             print(j + 1, cfg.primePaths[j])
