@@ -9,13 +9,13 @@ theme:
   name: material
   palette:
     - scheme: default
-      primary: orange
+      primary: teal
       accent: teal
       toggle:
         icon: material/toggle-switch-off-outline
         name: Dark mode
     - scheme: slate
-      primary: orange
+      primary: teal
       accent: teal
       toggle:
         icon: material/toggle-switch
@@ -36,7 +36,7 @@ nav:
     - Home: index.md
     - Benchmarks: benchmarks.md
     - Tutorials:
-        - ANTLR basics: antlr_basics.md
+        - ANTLR basics: tutorials/antlr_basics.md
         - Program instrumentation: tutorials/program_instrumentation.md
         - Source code metrics computation: tutorials/metrics_computation.md
     - Development proposals:
