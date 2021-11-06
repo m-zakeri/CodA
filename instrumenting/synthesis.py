@@ -1,16 +1,21 @@
 """
+The script instrument CPP
+
+
+
 
 """
 from antlr4 import TokenStreamRewriter
 
-from gen.CPP14Lexer import *
-from gen.CPP14Parser import *
-from gen.CPP14Listener import *
+from gen.CPP14_v2Lexer import *
+from gen.CPP14_v2Parser import *
+from gen.CPP14_v2Listener import *
 
-__author__ = 'Morteza ZAKERI'
+__author__ = 'Morteza Zakeri'
+__version__= '0.2.0'
 
 
-class InstrumentationListener(CPP14Listener):
+class InstrumentationListener(CPP14_v2Listener):
     def __init__(self, common_token_stream: CommonTokenStream):
         """
 
@@ -24,7 +29,7 @@ class InstrumentationListener(CPP14Listener):
         else:
             raise TypeError('common_token_stream is None')
 
-    def enterTranslationunit(self, ctx: CPP14Parser.TranslationunitContext):
+    def enterTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
         Creating and open a text file for logging the instrumentation result
         :param ctx:
@@ -33,22 +38,22 @@ class InstrumentationListener(CPP14Listener):
         new_code = '#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
         self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
 
-    def enterStatement(self, ctx: CPP14Parser.StatementContext):
+    def enterStatement(self, ctx: CPP14_v2Parser.StatementContext):
         """
         DFS traversal of a statement subtree, rooted at ctx.
         If the statement is a branching condition insert a prob.
         :param ctx:
         :return:
         """
-        if isinstance(ctx.parentCtx, (CPP14Parser.SelectionstatementContext, CPP14Parser.IterationstatementContext)):
+        if isinstance(ctx.parentCtx, (CPP14_v2Parser.SelectionstatementContext, CPP14_v2Parser.IterationstatementContext)):
             # if there is a compound statement after the branchning condition:
-            if isinstance(ctx.children[0], CPP14Parser.CompoundstatementContext):
+            if isinstance(ctx.children[0], CPP14_v2Parser.CompoundstatementContext):
                 self.branch_number += 1
                 new_code = '\nlogFile << "p' + str(self.branch_number) + '" << std::endl;\n'
                 self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
             # if there is only one statement after the branchning condition then create a block.
             elif not isinstance(ctx.children[0],
-                                (CPP14Parser.SelectionstatementContext, CPP14Parser.IterationstatementContext)):
+                                (CPP14_v2Parser.SelectionstatementContext, CPP14_v2Parser.IterationstatementContext)):
                 self.branch_number += 1
                 new_code = '{'
                 new_code += '\nlogFile << "p' + str(self.branch_number) + '" << std::endl;\n'
@@ -56,7 +61,7 @@ class InstrumentationListener(CPP14Listener):
                 new_code += '\n}'
                 self.token_stream_rewriter.replaceRange(ctx.start.tokenIndex, ctx.stop.tokenIndex, new_code)
 
-    def enterFunctionbody(self, ctx: CPP14Parser.FunctionbodyContext):
+    def enterFunctionbody(self, ctx: CPP14_v2Parser.FunctionbodyContext):
         """
         Insert a prob at the beginning of the function
         :param ctx:
@@ -66,7 +71,7 @@ class InstrumentationListener(CPP14Listener):
         new_code = '\nlogFile << "p' + str(self.branch_number) + '" << std::endl;'
         self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
 
-    def exitFunctionbody(self, ctx: CPP14Parser.FunctionbodyContext):
+    def exitFunctionbody(self, ctx: CPP14_v2Parser.FunctionbodyContext):
         """
          Insert a prob at the end of the function only if the function is void.
         :param ctx:
@@ -77,7 +82,7 @@ class InstrumentationListener(CPP14Listener):
             new_code = '\n logFile << "p' + str(self.branch_number) + '" << std::endl;\n'
             self.token_stream_rewriter.insertBeforeIndex(ctx.stop.tokenIndex, new_code)
 
-    def enterJumpstatement(self, ctx: CPP14Parser.JumpstatementContext):
+    def enterJumpstatement(self, ctx: CPP14_v2Parser.JumpstatementContext):
         """
         Insert a prob at the end of the function with return statement.
         :param ctx:
