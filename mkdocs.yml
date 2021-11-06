@@ -1,7 +1,7 @@
-site_name: OpenUnderstand Docs (v0.1.0dev)
+site_name: CodA Docs (v0.1.0dev)
 site_url: https://m-zakeri.github.io/CodA
 repo_url: https://github.com/m-zakeri/CodA
-site_description: Automated Source Code Refactoring Toolkit
+site_description: Code analysis toolkit
 site_author: Morteza Zakeri
 copyright: © 2020-2022 CodA project
 
