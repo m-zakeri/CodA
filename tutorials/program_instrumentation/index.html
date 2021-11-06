@@ -1,0 +1,641 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Automated Source Code Refactoring Toolkit">
+      
+      
+      
+        <meta name="author" content="Morteza Zakeri">
+      
+      
+        <link rel="canonical" href="https://m-zakeri.github.io/CodA/tutorials/program_instrumentation/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.5">
+    
+    
+      
+        <title>Program instrumentation - OpenUnderstand Docs (v0.1.0dev)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.be71726b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#program-instrumentation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="OpenUnderstand Docs (v0.1.0dev)" class="md-header__button md-logo" aria-label="OpenUnderstand Docs (v0.1.0dev)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OpenUnderstand Docs (v0.1.0dev)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Program instrumentation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 10a2 2 0 0 1 2 2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1 2-2m10-3a5 5 0 0 1 5 5 5 5 0 0 1-5 5H7a5 5 0 0 1-5-5 5 5 0 0 1 5-5h10M7 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3h10a3 3 0 0 0 3-3 3 3 0 0 0-3-3H7z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/m-zakeri/CodA/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="OpenUnderstand Docs (v0.1.0dev)" class="md-nav__button md-logo" aria-label="OpenUnderstand Docs (v0.1.0dev)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    OpenUnderstand Docs (v0.1.0dev)
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/m-zakeri/CodA/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../benchmarks/" class="md-nav__link">
+        Benchmarks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        Tutorials
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../antlr_basics/" class="md-nav__link">
+        ANTLR basics
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Program instrumentation
+      </a>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics_computation/" class="md-nav__link">
+        Source code metrics computation
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      <label class="md-nav__link" for="__nav_4">
+        Development proposals
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Development proposals" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Development proposals
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proposals/core_program_analysis_development/" class="md-nav__link">
+        Core program analysis development
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/m-zakeri/CodA/issues" class="md-nav__link">
+        Issue tracker
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/m-zakeri/CodA/edit/master/docs/tutorials/program_instrumentation.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="program-instrumentation">Program instrumentation</h1>
+<p>Edition 1 (July 19, 2020)</p>
+<p>In this tutorial we describe a primary task in source code transformation, <em>i.e.</em>, program instrumentation, which is one of the CodA features.</p>
+<p>The task can be performed by properly applying compiler techniques, adding required code snippets at specific source code places. Instrumentation is the fundamental prerequisite for almost all dynamic analysis types. Let us begin with a simple case in which the purpose of instrumentation is to log the executed path of the program control flow graph for each execution. Consider the following C++ program used to calculate the greatest common divider (GCD) of two integers:</p>
+<pre><code class="language-cpp">
+#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    int num1, num2, i, gcd;
+    std::cout &lt;&lt; &quot;Enter two integers: &quot;;
+    std::cin &gt;&gt; num1 &gt;&gt; num2;
+    for(i=1; i &lt;= num1 &amp;&amp; i &lt;= num2; ++i)
+    {
+        // Checks if i is factor of both integers
+        if(num1%i==0 &amp;&amp; num2%i==0) 
+            gcd = i;
+    }
+    std::cout &lt;&lt; &quot;G.C.D is &quot; &lt;&lt; gcd &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<p><em>Figure 1. Source code of GCD program.</em></p>
+<p>Appropriate instrumentation will put a log statement at the beginning of each basic block. For simplicity, we add a print statement to write the number of the executed basic block in the console. In the GCD program, lines 6, 10, 13 shows the starting point of basic blocks. Therefore, the instrumented version of the GCD program is similar to the following code, in which print statement has been added manually:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+
+#include &lt;fstream&gt;
+std::ofstream logFile(&quot;log_file.txt&quot;);
+
+int main()
+{
+logFile &lt;&lt; &quot;p1&quot; &lt;&lt; std::endl;
+    int num1, num2, i, gcd;
+    std::cout &lt;&lt; &quot;Enter two integers: &quot;;
+    std::cin &gt;&gt; num1 &gt;&gt; num2;
+    for(i=1; i &lt;= num1 &amp;&amp; i &lt;= num2; ++i)
+    {
+logFile &lt;&lt; &quot;p2&quot; &lt;&lt; std::endl;
+
+        // Checks if i is factor of both integers
+        if(num1%i==0 &amp;&amp; num2%i==0) 
+        {
+            logFile &lt;&lt; &quot;p3&quot; &lt;&lt; std::endl;
+            gcd=i;
+        }
+    //continue;
+    }
+    std::cout &lt;&lt; &quot;G.C.D is &quot; &lt;&lt; gcd &lt;&lt; std::endl;
+    //return 0;
+
+ logFile &lt;&lt; &quot;p4&quot; &lt;&lt; std::endl;
+}
+</code></pre>
+<p><em>Figure 2. Source code of GCD program after instrumenting.</em></p>
+<p>One can see the cout statements added in lines 6, 12, 15, i.e., at the beginning of each basic block. For large programs, it is impossible to add such statements manually. To perform this instrumentation by ANTLR, we just need to identify conditional statements, including if statements, loop statements, and switch-case statements. Besides, the beginning of each function should be recognized. ANTLR provides a listener interface that consists of an enter method and exit method for each nonterminal in target language grammar. The listener can be passed to the parse tree walker used for traversing the parse tree in DFS . For instrumenting, we must implement the methods of listener interface related to conditional rules. The implementation of the listener interface in Python is shown in the following:</p>
+<pre><code class="language-python"> class InstrumentationListener(CPP14Listener):
+    def __init__(self, tokenized_source_code: CommonTokenStream):
+        self.branch_number = 0
+        if tokenized_source_code is not None:
+      # Move all the tokens in the source code in a buffer, token_stream_rewriter. 
+            self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(tokenized_source_code)
+        else:
+            raise Exception(‘common_token_stream is None’)
+
+    # Creating and open a text file for logging the instrumentation result at beging of the program
+    def enterTranslationunit(self, ctx: CPP14Parser.TranslationunitContext):
+        new_code = '\n #include &lt;fstream&gt; \n std::ofstream logFile(&quot;log_file.txt&quot;); \n'
+        self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
+
+
+    # DFS traversal of a statement subtree, rooted at ctx and if the statement is a branching condition 
+    # insert a prob.
+    def enterStatement(self, ctx: CPP14Parser.StatementContext):
+        if isinstance(ctx.parentCtx, (CPP14Parser.SelectionstatementContext,
+                      CPP14Parser.IterationstatementContext)):
+            # if there is a compound statement after the branchning condition:
+            if isinstance(ctx.children[0], CPP14Parser.CompoundstatementContext):
+                self.branch_number += 1
+                new_code = '\n logFile &lt;&lt; &quot;p' + str(self.branch_number) + '&quot; &lt;&lt; endl; \n'
+                self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
+      # if there is only one statement after the branchning condition then create a block.
+            elif not isinstance(ctx.children[0],
+                                (CPP14Parser.SelectionstatementContext, CPP14Parser.IterationstatementContext)):
+                self.branch_number += 1
+                new_code = '{'
+                new_code += '\n logFile &lt;&lt; &quot;p' + str(self.branch_number) + '&quot; &lt;&lt; endl; \n'
+                new_code += ctx.getText()
+                new_code += '\n}'
+                self.token_stream_rewriter.replaceRange(ctx.start.tokenIndex, ctx.stop.tokenIndex, new_code)
+
+    def enterFunctionbody(self, ctx: CPP14Parser.FunctionbodyContext):
+        self.branch_number += 1
+        new_code = '\n logFile &lt;&lt; &quot;p' + str(self.branch_number) + '&quot; &lt;&lt; endl;\n'
+        self.token_stream_rewriter.insertAfter(ctx.start.tokenIndex, new_code)
+</code></pre>
+<p><em>Figure 3. ANTLR listener for instrumenting.</em></p>
+<p>In the above code, class <code>InstrumentationListener</code> implements the interface <code>CPP14Listener</code>, which is the base listener for C++ grammar and generated by ANTLR. Note that the grammar of C++ 14 is available at ANTLR official website. Two methods <code>enterStatement()</code> and <code>enterFunctionbody()</code> are implemented to add a print statement in proper places of program code, respectively, at the beginning of each conditional statement and each function. These two methods are invoked by ANTLR parser tree walker if we pass an instance of <code>InstrumnentationListerer</code> to it.</p>
+<p><code>InstrumentationListener</code> class also has two attributes: <code>branch_number</code> and <code>token_stream_rewriter</code>. branch_umber used to track the number of instrumented blocks during the instrumentation. Each time we add a print statement, we increment the value of <code>branch_number</code> by one unit. </p>
+<p>Line 3 defines <code>branch_number</code> and initialize it with zero. <code>token_stream_rewiter</code> object is an instance of <code>TokenStreamRewiter</code> class, which is provided by ANTLR and contain the stream of source code tokens. <code>TokenStreamRewriter</code> initializes with common_token_stream, which already has been built by ANTLR from the lexer class and then provides methods for adding and manipulating code snips within a given stream.  Line 5 creates an instance of <code>TokenStreamRewriter</code> class to access its required methods. If <code>common_token_stream</code> is none, then an exception raises (Line 7).</p>
+<p>Let explain the logic of <code>enterFunctionbody()</code> as it seems to be simpler than <code>enterStatement()</code>. Each time a function definition occurred in the source code, this method is invoked. First, the branch_number will be increased by 1 (Line 25). At line 26, the print statement, including the branch_number is prepared, and then at Line 27, we tell <code>token_stream_rewiter</code>  to insert this new code after the current beginning function token, <em>i.e.</em>, <code>{</code> in C++. </p>
+<p>For adding print after conditional and loop statements, more effort is required. <code>enterStatement()</code> is invoked each time that a statement node is visited. Line 10 checks to see if the statement is an instance of <code>SelectionsteatemetContext</code> or <code>IterationstatementContext</code>, which are relevant rule contexts for conditional and loop statements in C++ grammar. If this condition is not valid, <em>i.e.</em>, for regular statements, no action will perform. Otherwise, we are faced with two different situations. The first one (Line 11) is that the body of the conditional or loop statement is a compound statement, i.e., it has more than one statement, which encloses between two braces <code>{</code> and <code>}</code>.</p>
+<p>In such a case, we just need to add our print statement at the beginning of the compound statement right after token <code>{</code>. The code of this condition is exactly the same code used in <code>enterFunctionbody()</code>. The second situation occurs when the conditional or loop statement has only one statement inside its basic block. In this state, only the first statement is considered within the condition or loop by the compiler. If one adds a print statement without any enclosing brace, the execution path will not be captured correctly. Hence, in Line 15, after detecting that the statement is neither a compound statement nor branch, the proper code will be provided. The required code for instrumenting includes a left brace, a print statement, a current statement or context, and at the end, a right brace. </p>
+<p>Line 22 adds <code>new_code</code> to the current source code.
+Now the implementation of our <code>InstrumentationListener</code> has been finished. The next step is to write the main driver for the instrumentation tool and connect this listener to the parse tree walker. </p>
+<p>Figure 4 shows the body of the main python script required to create and run our efficient yet straightforward instrumenting tool. A comment line has explained each line of code, and therefore we omit extra descriptions. The only important note is that the instrumented code, <em>i.e.</em>, the modified source code, is accessible by <code>token_stream_rewirter</code> object. The <code>getDefualtText()</code> of <code>token_stream_rewirter</code> object is called to retrieve the new source code in Line 18.</p>
+<pre><code class="language-python"># Step 1: Convert input to a byte stream
+stream = InputStream(input_string)
+# Step 2: Create lexer
+lexer = test_v2Lexer(stream)
+# Step 3: Create a list of tokens
+token_stream = CommonTokenStream(lexer)
+# Step 4: Create parser
+parser = test_v2Parser(token_stream)
+# Step 5: Create parse tree
+parse_tree = parser.start()
+# Step 6: Adding a listener
+instrument_listener = InstrumentationListener(common_token_stream=self.common_token_stream)
+# Step 7: Create parese tree walker
+walker = ParseTreeWalker()
+# Step 8: Walk parse tree (to instrumnet the code)
+walker.walk(listener=instrument_listener, t=parse_tree)
+# Step 9: 
+new_source_code = instrument_listener.token_stream_rewriter.getDefaultText()
+print(new_source_code)
+</code></pre>
+<p><em>Figure 4. The driver code for instrumenting.</em></p>
+<p>After the instrumenting was completed, the program must be compiled then executed to apply the modification. Figure 5 shows an example of executing with a sample input. As shown in Figure 5, the executed path for inputs 24 and 18 are logged into the console, in addition to the program output, which is 6 in this example. The sequence of the printed path shows the order in which basic blocks were executed. We may change the instrumentation to capture more complicated information about runtime. However, the techniques and principles will be the same used in this simple example. Interested readers may find more exercise about instrumentation at the end of this chapter.</p>
+<p><img alt="Figure 5" src="../../figs/gcd_execution_output.png" /></p>
+<p><em>Figure 5. An example of executing the GCD program after instrumenting.</em></p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../antlr_basics/" class="md-footer__link md-footer__link--prev" aria-label="Previous: ANTLR basics" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              ANTLR basics
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../metrics_computation/" class="md-footer__link md-footer__link--next" aria-label="Next: Source code metrics computation" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Source code metrics computation
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            © 2020-2022 CodA project
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.409db549.min.js", "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.56a63758.min.js"></script>
+      
+    
+  </body>
+</html>

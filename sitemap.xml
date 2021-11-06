@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/benchmarks/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/proposals/core_program_analysis_development/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/tutorials/antlr_basics/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/tutorials/metrics_computation/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://m-zakeri.github.io/CodA/tutorials/program_instrumentation/</loc>
+         <lastmod>2021-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
