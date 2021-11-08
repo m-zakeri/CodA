@@ -22,11 +22,13 @@ class CFGInstListener(CPP14_v2Listener):
                 self.try_stack[-1].add((self.block_number , 'exception'))
         except:
             pass
+        # Add a new basic block to the basic-blocks dictionay for the function
         self.block_dict[self.domain_name]["Nodes"].append((self.block_number, self.block_start, self.block_stop))
 
     def addJunctionEdges(self):
         for source_node,Type  in self.select_junction_stack[-1]:
             dest_node = self.block_number
+            # Add a labeled edge to the CFG
             self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node,Type))
             self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
@@ -257,6 +259,7 @@ class CFGInstListener(CPP14_v2Listener):
     def exitFunctiontryblock(self, ctx:CPP14_v2Parser.FunctiontryblockContext):
         self.is_catch = False
         self.try_stack.pop()
+
     #selection
     def enterSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context): #if
         self.block_stop = ctx.start.line
@@ -265,13 +268,30 @@ class CFGInstListener(CPP14_v2Listener):
         self.addDecision('True')
         self.addJunc('False')
 
+    def exitSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context):#if
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addJunctionEdges()
+        self.select_junction_stack.pop()
+
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
+
     def enterSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context): #if-else
-        self.block_stop = ctx.start.line
-        self.addNode()
-        self.select_junction_stack.append(list())
+        self.block_stop = ctx.start.line   # saves if statement number into block_stop
+        self.addNode()                     # adds a basic block to the function dictionary
+        self.select_junction_stack.append(list())    # appends an empty list to the junction_stack
         # decision stack first if part pop True then else part pop False
         self.addDecision('False')
         self.addDecision('True')
+
+    def exitSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context):#if-else
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addJunctionEdges()
+        self.select_junction_stack.pop()
+        new_code = '\n' +  self.logLine() +';\n'  # to be removed. it is for instrumentatio
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
 
     def enterSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
         self.block_stop = ctx.start.line
@@ -282,6 +302,26 @@ class CFGInstListener(CPP14_v2Listener):
         self.has_case_stack.append(False)
         self.switch_for_stack.append(SWITCH_FOR["switch"])
         self.switch_junction_stack.append(list())
+
+    def exitSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
+        self.block_stop = ctx.stop.line
+        self.addNode()
+        self.switch_for_stack.pop()
+        if not self.has_default_stack.pop():
+            self.switch_junction_stack[-1].append((self.switch_stack.pop()[0],'flow'))
+            if not self.has_case_stack.pop():
+                self.has_jump_stack.pop()
+            elif not self.has_jump_stack.pop():
+                self.addSwitchJunc()
+        elif not self.has_jump_stack.pop():
+            self.addSwitchJunc()
+
+        self.block_number += 1
+        self.block_start = ctx.stop.line
+        self.addSwitchJunctionEdges()
+        self.switch_junction_stack.pop()
+        new_code = '\n' +  self.logLine() +';\n'
+        self.afterInsert[ctx.stop.tokenIndex] += new_code
     
     def enterLabeledstatement1(self, ctx:CPP14_v2Parser.Labeledstatement1Context): #label
         try:
@@ -505,42 +545,7 @@ class CFGInstListener(CPP14_v2Listener):
                 new_code = '\n}'
                 self.afterInsert[ctx.stop.tokenIndex] += new_code
 
-    def exitSelectionstatement1(self, ctx:CPP14_v2Parser.Selectionstatement1Context):#if
-        self.block_number += 1
-        self.block_start = ctx.stop.line
-        self.addJunctionEdges()
-        self.select_junction_stack.pop()
 
-        new_code = '\n' +  self.logLine() +';\n'
-        self.afterInsert[ctx.stop.tokenIndex] += new_code
-
-    def exitSelectionstatement2(self, ctx:CPP14_v2Parser.Selectionstatement2Context):#if-else
-        self.block_number += 1
-        self.block_start = ctx.stop.line
-        self.addJunctionEdges()
-        self.select_junction_stack.pop()
-        new_code = '\n' +  self.logLine() +';\n'
-        self.afterInsert[ctx.stop.tokenIndex] += new_code
-
-    def exitSelectionstatement3(self, ctx:CPP14_v2Parser.Selectionstatement3Context): #switch
-        self.block_stop = ctx.stop.line
-        self.addNode()
-        self.switch_for_stack.pop()
-        if not self.has_default_stack.pop():
-            self.switch_junction_stack[-1].append((self.switch_stack.pop()[0],'flow'))
-            if not self.has_case_stack.pop():
-                self.has_jump_stack.pop()
-            elif not self.has_jump_stack.pop():
-                self.addSwitchJunc()
-        elif not self.has_jump_stack.pop():
-            self.addSwitchJunc()
-
-        self.block_number += 1
-        self.block_start = ctx.stop.line
-        self.addSwitchJunctionEdges()
-        self.switch_junction_stack.pop()
-        new_code = '\n' +  self.logLine() +';\n'
-        self.afterInsert[ctx.stop.tokenIndex] += new_code
 
     def exitIterationstatement1(self, ctx:CPP14_v2Parser.Iterationstatement1Context): #while
         self.iterate_stack.pop()
