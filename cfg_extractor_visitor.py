@@ -5,7 +5,6 @@ from antlr4 import *
 
 from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
-from pprint import pprint as print
 
 
 class StackAlphabet(Enum):
