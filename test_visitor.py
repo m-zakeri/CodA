@@ -115,6 +115,10 @@ number_of_tokens = len(lexer.getAllTokens())
 
 visitor = CFGExtractorVisitor(token_stream)
 visitor.visit(pars_tree)
+from pprint import pprint
+
+pprint(visitor.stack)
+pprint(visitor.packs)
 
 # walker.walk(cfg_listener, pars_tree)
 

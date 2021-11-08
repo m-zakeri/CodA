@@ -31,34 +31,25 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         self.stack.append(self.extract_exact_text(ctx))
         return self.visitChildren(ctx)
 
-    def visitSelectionstatement2(self, ctx: CPP14_v2Parser.Selectionstatement2Context):
-        if_body = ctx.statement(0)
-        else_body = ctx.statement(1)
-
-        if StackAlphabet.IF_OPEN not in self.stack:
-            self.stack, right = partition_on_last(self.stack, StackAlphabet.IF_OPEN)
-            self.packs.append((None, right))
+    def visitSelectionstatement1(self, ctx: CPP14_v2Parser.Selectionstatement1Context):
+        self.stack.append(f"condition({self.extract_exact_text(ctx.condition())})")
+        if_body = ctx.statement()
 
         self.stack.append(StackAlphabet.IF_OPEN)
         self.visit(if_body)
+        self.stack.append(StackAlphabet.IF_CLOSE)
 
-        self.stack, right = partition_on_last(self.stack, StackAlphabet.IF_OPEN)
-        self.packs.append((True, right))
+    def visitSelectionstatement2(self, ctx: CPP14_v2Parser.Selectionstatement2Context):
+        self.stack.append(f"condition({self.extract_exact_text(ctx.condition())})")
+        if_body = ctx.statement(0)
+        else_body = ctx.statement(1)
 
-        print("**** should be if open")
-        print(self.stack)
-        print(self.packs)
-        print("**********************")
+        self.stack.append(StackAlphabet.IF_OPEN)
+        self.visit(if_body)
+        self.stack.append(StackAlphabet.IF_CLOSE)
 
         self.stack.append(StackAlphabet.ELSE_OPEN)
-        self.stack, right = partition_on_last(self.stack, StackAlphabet.ELSE_OPEN)
-        self.packs.append(right)
-
         self.visit(else_body)
-
-        self.stack, right = partition_on_last(self.stack, StackAlphabet.ELSE_OPEN)
-        self.packs.append(right)
-
         self.stack.append(StackAlphabet.ELSE_CLOSE)
 
 
