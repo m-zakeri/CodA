@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from itertools import takewhile
-
+import networkx as nx
 from antlr4 import *
 
 from gen.CPP14_v2Parser import CPP14_v2Parser
@@ -18,12 +18,12 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
     def __init__(self, common_token_stream: CommonTokenStream):
         self.token_stream = common_token_stream
         self.stack = []
-        self.packs = []
+        self.cfg = nx.DiGraph()
 
-    def extract_exact_text(self, token: ParserRuleContext):
-        return self.token_stream.getText(token.start.tokenIndex, token.stop.tokenIndex)
+    def extract_exact_text(self, rule: ParserRuleContext):
+        return self.token_stream.getText(rule.start.tokenIndex, rule.stop.tokenIndex)
 
-    def visitExpression(self, ctx: CPP14_v2Parser.ExpressionContext):
+    def visitExpressionstatement(self, ctx:CPP14_v2Parser.ExpressionstatementContext):
         self.stack.append(self.extract_exact_text(ctx))
         return self.visitChildren(ctx)
 
