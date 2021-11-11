@@ -92,21 +92,15 @@ def embed_in_if_structure(gin, condition) -> nx.DiGraph:
 
 def draw_CFG(graph):
     top_down_pos = graphviz_layout(graph, prog="dot")
-
+    node_labels = {node: args["data"] for node, args in graph.nodes.data()}
+    edge_labels = {(f, t): args["state"] for f, t, args in graph.edges.data() if args.get("state")}
     nx.draw(graph,
             pos=top_down_pos,
-            with_labels=True,
-            font_weight="bold",
-            node_size=800,
+            node_shape="s",
+            node_size=100,
+            node_color="white",
             font_color="black",
-            alpha=0.9,
             edgecolors="tab:gray")
-
-    edge_labels = {(i[0], i[1]): i[2]["state"] for i in graph.edges.data() if i[2].get("state")}
-
-    nx.draw_networkx_edge_labels(graph,
-                                 pos=top_down_pos,
-                                 edge_labels=edge_labels,
-                                 font_weight="bold")
-
+    nx.draw_networkx_labels(graph, pos=top_down_pos, labels=node_labels, horizontalalignment="left")
+    nx.draw_networkx_edge_labels(graph, pos=top_down_pos, edge_labels=edge_labels, font_weight="bold")
     plt.show()
