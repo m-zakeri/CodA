@@ -21,10 +21,16 @@ def build_single_node_graph(data):
     return g
 
 
-def concat_graphs(gin1, gin2):
-    gin2 = shift_node_labels(gin2, len(gin1))
-    g: nx.DiGraph = nx.compose(gin1, gin2)
-    g.add_edge(last_node(gin1), head_node(gin2))
+# todo: merge gin1's last node with gin2's first node
+def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
+    gin2 = shift_node_labels(gin2, len(gin1) - 1)
+
+    gin1_last = last_node(gin1)
+    gin2_first = head_node(gin2)
+    data = gin1.nodes[gin1_last]["data"] + gin2.nodes[gin2_first]["data"]
+
+    g = nx.compose(gin1, gin2)
+    g.nodes[gin1_last]["data"] = data
     return g
 
 
