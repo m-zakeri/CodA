@@ -8,7 +8,7 @@ from antlr4 import *
 from cfg_extractor_visitor import CFGExtractorVisitor
 from gen.CPP14_v2Lexer import CPP14_v2Lexer
 from gen.CPP14_v2Parser import CPP14_v2Parser
-
+from graph_utils import draw_CFG
 
 def checkCoverWithDetour(primepath, exepath):
     exe_length = len(exepath)
@@ -81,7 +81,7 @@ def checkCoverWithSideAndDetour(primepath, exepath):
 
 
 # input_path=input("please enter the source code path:\n")
-input_path = 'test_source/5.cpp'
+input_path = 'test_source/cpp.cpp'
 test_cases_dir = 'test_source/4/'
 f = open(input_path, 'r')
 name = Path(f.name).stem
@@ -114,12 +114,8 @@ lexer.reset()
 number_of_tokens = len(lexer.getAllTokens())
 
 visitor = CFGExtractorVisitor(token_stream)
-visitor.visit(pars_tree)
-from pprint import pprint
-
-pprint(visitor.stack)
-pprint(visitor.packs)
-
+g = visitor.visit(pars_tree)
+draw_CFG(g)
 # walker.walk(cfg_listener, pars_tree)
 
 # # compute primepaths
