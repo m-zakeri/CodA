@@ -70,9 +70,6 @@ def embed_in_if_structure(gin) -> nx.DiGraph:
                       (g_cond, gin_start, {"state": "True"}),
                       (gin_end, g_end)])
     g = nx.compose(g, gin)
-    # x = nx.contracted_nodes(x, "cond", "start", self_loops=False)
-    # x = nx.contracted_nodes(x, "end", "temp_end", self_loops=False)
-    # x = nx.relabel_nodes(x, {"temp_start": "start"})
     return g
 
 
