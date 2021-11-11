@@ -30,8 +30,9 @@ def concat_graphs(gin1, gin2):
 
 def embed_in_if_else_structure(gin_true, gin_false):
     g = nx.DiGraph()
-    gin_true = shift_node_labels(gin_true, 2)
-    gin_false = shift_node_labels(gin_false, len(gin_true) + 2)
+    g_starting_nodes_len = 2
+    gin_true = shift_node_labels(gin_true, g_starting_nodes_len)
+    gin_false = shift_node_labels(gin_false, len(gin_true) + g_starting_nodes_len)
 
     gin_true_start = head_node(gin_true)
     gin_true_end = last_node(gin_true)
@@ -55,7 +56,8 @@ def embed_in_if_else_structure(gin_true, gin_false):
 
 def embed_in_if_structure(gin) -> nx.DiGraph:
     g = nx.DiGraph()
-    gin = shift_node_labels(gin, 2)
+    g_starting_nodes_len = 2
+    gin = shift_node_labels(gin, g_starting_nodes_len)
 
     gin_start = head_node(gin)
     gin_end = last_node(gin)
