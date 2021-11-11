@@ -28,10 +28,12 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
     def visitCompoundstatement(self, ctx: CPP14_v2Parser.CompoundstatementContext):
         return self.visit(ctx.statementseq())
 
+    # todo: add conditions
     def visitSelectionstatement1(self, ctx: CPP14_v2Parser.Selectionstatement1Context):
         if_body = ctx.statement()
+        condition = self.extract_exact_text(ctx.condition())
         gin = self.visit(if_body)
-        return embed_in_if_structure(gin)
+        return embed_in_if_structure(gin, condition)
 
     def visitSelectionstatement2(self, ctx: CPP14_v2Parser.Selectionstatement2Context):
         if_body = ctx.statement(0)
@@ -40,15 +42,16 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         else_body = ctx.statement(1)
         gin_else = self.visit(else_body)
 
-        return embed_in_if_else_structure(gin_if, gin_else)
+        condition = self.extract_exact_text(ctx.condition())
+        return embed_in_if_else_structure(gin_if, gin_else, condition)
 
     def visitExpressionstatement(self, ctx: CPP14_v2Parser.ExpressionstatementContext):
         expression_text = self.extract_exact_text(ctx)
-        return build_single_node_graph(expression_text)
+        return build_single_node_graph([expression_text])
 
     def visitDeclarationstatement(self, ctx: CPP14_v2Parser.DeclarationstatementContext):
         declaration_text = self.extract_exact_text(ctx)
-        return build_single_node_graph(declaration_text)
+        return build_single_node_graph([declaration_text])
 
     def visitStatementseq2(self, ctx: CPP14_v2Parser.Statementseq2Context):
         gin1 = self.visit(ctx.statementseq())
