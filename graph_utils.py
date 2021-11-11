@@ -34,7 +34,7 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     return g
 
 
-def embed_in_if_else_structure(gin_true, gin_false):
+def embed_in_if_else_structure(gin_true, gin_false, condition):
     g = nx.DiGraph()
     g_starting_nodes_len = 2
     gin_true = shift_node_labels(gin_true, g_starting_nodes_len)
@@ -55,12 +55,17 @@ def embed_in_if_else_structure(gin_true, gin_false):
                       (g_cond, gin_true_start, {"state": "True"}),
                       (gin_true_end, g_end),
                       (gin_false_end, g_end)])
+
+    g.nodes[g_start]["data"] = []
+    g.nodes[g_cond]["data"] = [condition]
+    g.nodes[g_end]["data"] = []
     g = nx.compose(g, gin_true)
     g = nx.compose(g, gin_false)
     return g
 
 
-def embed_in_if_structure(gin) -> nx.DiGraph:
+# todo: if the node before condition
+def embed_in_if_structure(gin, condition) -> nx.DiGraph:
     g = nx.DiGraph()
     g_starting_nodes_len = 2
     gin = shift_node_labels(gin, g_starting_nodes_len)
@@ -77,6 +82,10 @@ def embed_in_if_structure(gin) -> nx.DiGraph:
                       (g_cond, g_end, {"state": "False"}),
                       (g_cond, gin_start, {"state": "True"}),
                       (gin_end, g_end)])
+
+    g.nodes[g_start]["data"] = []
+    g.nodes[g_cond]["data"] = [condition]
+    g.nodes[g_end]["data"] = []
     g = nx.compose(g, gin)
     return g
 
