@@ -36,7 +36,7 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
 
 def embed_in_if_else_structure(gin_true, gin_false, condition):
     g = nx.DiGraph()
-    g_starting_nodes_len = 2
+    g_starting_nodes_len = 1
     gin_true = shift_node_labels(gin_true, g_starting_nodes_len)
     gin_false = shift_node_labels(gin_false, len(gin_true) + g_starting_nodes_len)
 
@@ -46,18 +46,15 @@ def embed_in_if_else_structure(gin_true, gin_false, condition):
     gin_false_end = last_node(gin_false)
 
     g_start = 0
-    g_cond = 1
     g_end = gin_false_end + 1
 
-    g.add_nodes_from([g_start, g_cond, g_end, gin_true_start, gin_false_start])
-    g.add_edges_from([(g_start, g_cond),
-                      (g_cond, gin_false_start, {"state": "False"}),
-                      (g_cond, gin_true_start, {"state": "True"}),
+    g.add_nodes_from([g_start, g_end, gin_true_start, gin_false_start])
+    g.add_edges_from([(g_start, gin_false_start, {"state": "False"}),
+                      (g_start, gin_true_start, {"state": "True"}),
                       (gin_true_end, g_end),
                       (gin_false_end, g_end)])
 
-    g.nodes[g_start]["data"] = []
-    g.nodes[g_cond]["data"] = [condition]
+    g.nodes[g_start]["data"] = [condition]
     g.nodes[g_end]["data"] = []
     g = nx.compose(g, gin_true)
     g = nx.compose(g, gin_false)
@@ -67,24 +64,21 @@ def embed_in_if_else_structure(gin_true, gin_false, condition):
 # todo: if the node before condition
 def embed_in_if_structure(gin, condition) -> nx.DiGraph:
     g = nx.DiGraph()
-    g_starting_nodes_len = 2
+    g_starting_nodes_len = 1
     gin = shift_node_labels(gin, g_starting_nodes_len)
 
     gin_start = head_node(gin)
     gin_end = last_node(gin)
 
     g_start = 0
-    g_cond = 1
     g_end = gin_end + 1
 
-    g.add_nodes_from([g_start, g_cond, g_end, gin_start])
-    g.add_edges_from([(g_start, g_cond),
-                      (g_cond, g_end, {"state": "False"}),
-                      (g_cond, gin_start, {"state": "True"}),
+    g.add_nodes_from([g_start, g_end, gin_start])
+    g.add_edges_from([(g_start, g_end, {"state": "False"}),
+                      (g_start, gin_start, {"state": "True"}),
                       (gin_end, g_end)])
 
-    g.nodes[g_start]["data"] = []
-    g.nodes[g_cond]["data"] = [condition]
+    g.nodes[g_start]["data"] = [condition]
     g.nodes[g_end]["data"] = []
     g = nx.compose(g, gin)
     return g
