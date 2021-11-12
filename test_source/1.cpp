@@ -47,3 +47,14 @@ int f2()
 
     return i;
 }
+
+
+void f3 ()
+{
+
+     if (i < j)
+        x++;
+     else if(j>10)
+         y++;
+
+}
