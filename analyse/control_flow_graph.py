@@ -14,8 +14,7 @@ can be visualized with graphviz.
 """
 
 __author__ = 'Morteza Zakeri'
-__version__= '0.2.0'
-
+__version__ = '0.2.0'
 
 import json
 import matplotlib.pyplot as plt
@@ -37,6 +36,42 @@ SWITCH_FOR = {
 
 
 class CFGInstListener(CPP14_v2Listener):
+    def __init__(self, common_token_stream: CommonTokenStream, number_of_tokens, directory_name):
+        """
+        :param common_token_stream:
+        """
+        self.cfg_path = 'CFGS/' + directory_name + '/'
+        self.instrument_path = 'Instrument/' + directory_name + '/'
+        self.block_dict = {}
+        self.block_number = 0
+        self.block_start = 0
+        self.block_stop = 0
+        self.domain_name = 0
+        self.function_dict = {}
+        self.select_junction_stack = []
+        self.select_decision_stack = []
+        self.iterate_junction_stack = []
+        self.iterate_stack = []
+        self.switch_junction_stack = []
+        self.switch_stack = []
+        self.switch_for_stack = []
+        self.has_jump_stack = []
+        self.has_default_stack = []
+        self.has_case_stack = []
+        self.try_stack = []
+        self.try_junction_stack = []
+        self.is_catch = False
+        self.afterInsert = [''] * number_of_tokens
+        self.initial_nodes = set()
+        self.final_nodes = set()
+        self.label_dict = {}
+        self.goto_dict = {}
+
+        # Move all the tokens in the source code in a buffer, token_stream_rewriter.
+        if common_token_stream is not None:
+            self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(common_token_stream)
+        else:
+            raise TypeError('common_token_stream is None')
 
     def addNode(self):
         try:
@@ -45,6 +80,9 @@ class CFGInstListener(CPP14_v2Listener):
         except:
             pass
         self.block_dict[self.domain_name]["Nodes"].append((self.block_number, self.block_start, self.block_stop))
+        # if self.block_number == 4:
+        #     print('$', self.block_number, self.block_start, self.block_stop)
+        #     quit()
 
     def addJunctionEdges(self):
         for source_node, Type in self.select_junction_stack[-1]:
@@ -140,45 +178,7 @@ class CFGInstListener(CPP14_v2Listener):
             self.block_dict[self.domain_name]["Edges"].append((source_node, dest_node, Type))
             self.CFG_file.write(str(source_node) + ' ' + str(dest_node) + '\n')
 
-    def __init__(self, common_token_stream: CommonTokenStream, number_of_tokens, directory_name):
-        """
-        :param common_token_stream:
-        """
-        self.cfg_path = 'CFGS/' + directory_name + '/'
-        self.instrument_path = 'Instrument/' + directory_name + '/'
-        self.block_dict = {}
-        self.block_number = 0
-        self.block_start = 0
-        self.block_stop = 0
-        self.domain_name = 0
-        self.function_dict = {}
-        self.select_junction_stack = []
-        self.select_decision_stack = []
-        self.iterate_junction_stack = []
-        self.iterate_stack = []
-        self.switch_junction_stack = []
-        self.switch_stack = []
-        self.switch_for_stack = []
-        self.has_jump_stack = []
-        self.has_default_stack = []
-        self.has_case_stack = []
-        self.try_stack = []
-        self.try_junction_stack = []
-        self.is_catch = False
-        self.afterInsert = [''] * number_of_tokens
-        self.initial_nodes = set()
-        self.final_nodes = set()
-        self.label_dict = {}
-        self.goto_dict = {}
-
-        # Move all the tokens in the source code in a buffer, token_stream_rewriter.
-        if common_token_stream is not None:
-            self.token_stream_rewriter = TokenStreamRewriter.TokenStreamRewriter(common_token_stream)
-        else:
-            raise TypeError('common_token_stream is None')
-        # create graph
-        self.CFG_graph = nx.Graph()
-
+    # -----------------------------------------------
     def enterTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
         """
         Creating and open a text file for logging the instrumentation result
@@ -187,7 +187,7 @@ class CFGInstListener(CPP14_v2Listener):
         """
         self.instrumented_source = open(self.instrument_path + 'instrumented_source.cpp', 'w')
         log_path = self.instrument_path + "log_file.txt"
-        new_code = '\n//in the name of allah\n#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
+        new_code = '\n#include <fstream>\nstd::ofstream logFile("log_file.txt");\n\n'
         self.token_stream_rewriter.insertBeforeIndex(ctx.start.tokenIndex, new_code)
         self.domain_name = 0
 
@@ -708,12 +708,14 @@ class CFGInstListener(CPP14_v2Listener):
         json.dump(self.block_dict[self.domain_name], graph_json)
 
         func_graph = nx.MultiDiGraph(directed=True)
+        edge_labels = {}
         func_graph.add_nodes_from([n for n, s, e in self.block_dict[self.domain_name]["Nodes"]])
         func_graph.add_edges_from([(s, d) for s, d, T in self.block_dict[self.domain_name]["Edges"]])
-        edge_labels = {}
-
         for s, d, T in self.block_dict[self.domain_name]["Edges"]:
+            func_graph[s][d][0]['label'] = T
             edge_labels[(s, d)] = T
+
+        func_graph = self.edge_contraction(func_graph)
 
         graphviz_layout_progs = ['neato', 'dot', 'twopi', 'fdp', 'sfdp', 'circo']
         # pos = nx.spring_layout(func_graph)
@@ -733,22 +735,23 @@ class CFGInstListener(CPP14_v2Listener):
                 color_map.append('lightblue')
                 size_map.append(750)
 
-        nx.draw(func_graph, pos=pos, with_labels=True, node_color=color_map, node_size=size_map,
-                connectionstyle='arc3, rad = 0.1')
-        nx.draw_networkx_edge_labels(func_graph, pos=pos, edge_labels=edge_labels)
+        # nx.draw(func_graph, pos=pos, with_labels=True, node_color=color_map, node_size=size_map,
+        #         connectionstyle='arc3, rad = 0.1')
+        # nx.draw_networkx_edge_labels(func_graph, pos=pos, edge_labels=edge_labels)
 
-        plt.savefig(self.cfg_path + str(self.domain_name) + '.png')
-        plt.close()
+        # plt.savefig(self.cfg_path + str(self.domain_name) + '.png')
+        # plt.close()
 
         pydot_graph = nx.drawing.nx_pydot.to_pydot(func_graph)
-        for index, edges in enumerate(edge_labels):
+        for edge_ in func_graph.edges:
             # print('@@@', str(edge_labels[edges]))
             # pydot_graph.del_edge(str(edges[0]), dst=str(edges[1]))
             # pydot_graph.add_edge(pydot.Edge(src=str(edges[0]), dst=str(edges[1]),
             #                                 **{'label': str(edge_labels[edges])}
             #                                 ))
-            pydot_graph.get_edge(str(edges[0]),
-                                 str(edges[1]))[0].obj_dict['attributes']['label'] = str(edge_labels[edges])
+            l_ = func_graph[edge_[0]][edge_[1]][0]['label']
+            # print('label', l_)
+            pydot_graph.get_edge(str(edge_[0]), str(edge_[1]))[0].obj_dict['attributes']['label'] = l_
 
         pydot_graph.get_node('1')[0].obj_dict['attributes']['fillcolor'] = 'green'
         pydot_graph.get_node('1')[0].obj_dict['attributes']['color'] = 'green'
@@ -777,3 +780,18 @@ class CFGInstListener(CPP14_v2Listener):
     def enterDeclarator(self, ctx: CPP14_v2Parser.DeclaratorContext):
         pass
         # print(ctx.parentCtx.parentCtx.parentCtx.getText())
+
+    def edge_contraction(self, G):
+        to_be_contracted = []
+        for edge_ in G.edges:
+            if not (G.out_degree(edge_[0]) > 1 or G.in_degree(edge_[1]) > 1):
+                print('to be contracted', edge_[0], edge_[1])
+                to_be_contracted.append(edge_)
+        if len(to_be_contracted) > 1:
+            to_be_contracted.pop(0)
+
+        for edge_ in to_be_contracted:
+            G = nx.contracted_nodes(G, edge_[0], edge_[1], self_loops=False)
+            # G = nx.contracted_edge(G, edge_, self_loops=False)
+        G = nx.convert_node_labels_to_integers(G, first_label=1, ordering='default', label_attribute=None)
+        return G
