@@ -3,6 +3,7 @@ CodA main file
 
 """
 
+
 from analyse.control_flow_graph import CFGInstListener
 from gen.CPP14_v2Lexer import CPP14_v2Lexer
 from gen.CPP14_v2Parser import CPP14_v2Parser
@@ -11,6 +12,47 @@ from antlr4 import *
 from pathlib import Path
 import os
 import json
+
+
+# input_path=input("please enter the source code path:\n")
+# test_cases_dir = input("please enter the testcases directory:\n")
+input_path = 'test_source/1.cpp'
+test_cases_dir = 'test_source/test/'
+
+f = open(input_path, 'r')
+name = Path(f.name).stem
+cfg_path = 'CFGS/' + name
+instrument_path = 'Instrument/' + name
+try:
+    os.mkdir(cfg_path)
+except:
+    pass
+try:
+    os.mkdir(instrument_path)
+except:
+    pass
+
+source = f.read()
+
+stream = InputStream(source)
+
+lexer = CPP14_v2Lexer(stream)
+
+token_stream = CommonTokenStream(lexer)
+
+parser = CPP14_v2Parser(token_stream)
+
+pars_tree = parser.translationunit()
+
+lexer.reset()
+number_of_tokens = len(lexer.getAllTokens())
+cfg_listener = CFGInstListener(token_stream, number_of_tokens, name)
+walker = ParseTreeWalker()
+
+walker.walk(cfg_listener, pars_tree)
+
+quit()
+
 
 
 def checkCoverWithDetour(primepath, exepath):
@@ -83,48 +125,13 @@ def checkCoverWithSideAndDetour(primepath, exepath):
     return False
 
 
-# input_path=input("please enter the source code path:\n")
-# test_cases_dir = input("please enter the testcases directory:\n")
-input_path = 'test_source/1.cpp'
-test_cases_dir = 'test_source/test/'
-
-f = open(input_path, 'r')
-name = Path(f.name).stem
-cfg_path = 'CFGS/' + name
-instrument_path = 'Instrument/' + name
-try:
-    os.mkdir(cfg_path)
-except:
-    pass
-try:
-    os.mkdir(instrument_path)
-except:
-    pass
-
-source = f.read()
-
-stream = InputStream(source)
-
-lexer = CPP14_v2Lexer(stream)
-
-token_stream = CommonTokenStream(lexer)
-
-parser = CPP14_v2Parser(token_stream)
-
-pars_tree = parser.translationunit()
-
-lexer.reset()
-number_of_tokens = len(lexer.getAllTokens())
-cfg_listener = CFGInstListener(token_stream, number_of_tokens, name)
-walker = ParseTreeWalker()
-
-walker.walk(cfg_listener, pars_tree)
 
 # compute prime_paths
 function_prime_paths = {}
 function_logs = {}
 functions_json = open(cfg_path + '/functions.json', 'r')
 function_dict = json.load(functions_json)
+
 for f_code in function_dict:
     try:
         cfg_file = open(cfg_path + '/' + f_code + '.txt', 'r')
@@ -138,7 +145,6 @@ for f_code in function_dict:
 primepaths_json = open(cfg_path + '/primepaths.json', 'w')
 json.dump(function_prime_paths, primepaths_json)
 
-quit()
 
 # compute coverage
 instrument_path = 'Instrument/' + name
@@ -200,10 +206,7 @@ for test_case_file in test_case_files:
             else:
                 primepaths_coverage[detour][f_code][test_case_file].append(0)
 
-percent_coverage = {}
-percent_coverage[side_and_de] = {}
-percent_coverage[side] = {}
-percent_coverage[detour] = {}
+percent_coverage = {side_and_de: {}, side: {}, detour: {}}
 for f_code in function_dict:
     if len(function_prime_paths[f_code]) > 0:
         total_cover = [0] * len(function_prime_paths[f_code])
