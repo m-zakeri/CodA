@@ -34,6 +34,43 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     return g
 
 
+def embed_in_do_while_structure(gin, condition):
+    g = nx.DiGraph()
+    g_starting_nodes_len = 1
+    gin = shift_node_labels(gin, g_starting_nodes_len)
+    gin_start = head_node(gin)
+    gin_end = last_node(gin)
+    g_start = 0
+    g_end = gin_end + 1
+    g.add_nodes_from([g_start, g_end, gin_start])
+    g.add_edges_from([(g_start, gin_start),
+                      (gin_start, gin_start, {"state": "True"}),
+                      (gin_end, g_end, {"state": "False"})])
+    gin.nodes[gin_end]["data"] += [condition]
+    g.nodes[g_start]["data"] = []
+    g.nodes[g_end]["data"] = []
+    g = nx.compose(g, gin)
+    return g
+
+
+def embed_in_while_structure(gin, condition):
+    g = nx.DiGraph()
+    g_starting_nodes_len = 1
+    gin = shift_node_labels(gin, g_starting_nodes_len)
+    gin_start = head_node(gin)
+    gin_end = last_node(gin)
+    g_start = 0
+    g_end = gin_end + 1
+    g.add_nodes_from([g_start, g_end, gin_start])
+    g.add_edges_from([(gin_end, g_start),
+                      (g_start, gin_start, {"state": "True"}),
+                      (g_start, g_end, {"state": "False"})])
+    g.nodes[g_start]["data"] = [condition]
+    g.nodes[g_end]["data"] = []
+    g = nx.compose(g, gin)
+    return g
+
+
 def embed_in_if_else_structure(gin_true, gin_false, condition):
     g = nx.DiGraph()
     g_starting_nodes_len = 1
@@ -85,16 +122,16 @@ def embed_in_if_structure(gin, condition) -> nx.DiGraph:
 
 
 def draw_CFG(graph):
-    top_down_pos = graphviz_layout(graph, prog="dot")
+    pos = graphviz_layout(graph, prog="dot")
     node_labels = {node: args["data"] for node, args in graph.nodes.data()}
     edge_labels = {(f, t): args["state"] for f, t, args in graph.edges.data() if args.get("state")}
     nx.draw(graph,
-            pos=top_down_pos,
+            pos=pos,
             node_shape="s",
             node_size=100,
             node_color="white",
             font_color="black",
             edgecolors="tab:gray")
-    nx.draw_networkx_labels(graph, pos=top_down_pos, labels=node_labels, horizontalalignment="left")
-    nx.draw_networkx_edge_labels(graph, pos=top_down_pos, edge_labels=edge_labels, font_weight="bold")
+    nx.draw_networkx_labels(graph, pos=pos, labels=node_labels, horizontalalignment="left")
+    nx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=edge_labels, font_weight="bold")
     plt.show()
