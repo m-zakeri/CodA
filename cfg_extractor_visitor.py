@@ -22,9 +22,6 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
     def visitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         return self.visit(ctx.functionbody())
 
-    def visitStatementseq1(self, ctx: CPP14_v2Parser.Statementseq1Context):
-        return self.visit(ctx.statement())
-
     def visitCompoundstatement(self, ctx: CPP14_v2Parser.CompoundstatementContext):
         return self.visit(ctx.statementseq())
 
@@ -45,6 +42,14 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         condition = self.extract_exact_text(ctx.condition())
         return embed_in_if_else_structure(gin_if, gin_else, condition)
 
+    def visitStatementseq1(self, ctx: CPP14_v2Parser.Statementseq1Context):
+        return self.visit(ctx.statement())
+
+    def visitStatementseq2(self, ctx: CPP14_v2Parser.Statementseq2Context):
+        gin1 = self.visit(ctx.statementseq())
+        gin2 = self.visit(ctx.statement())
+        return concat_graphs(gin1, gin2)
+
     def visitExpressionstatement(self, ctx: CPP14_v2Parser.ExpressionstatementContext):
         expression_text = self.extract_exact_text(ctx)
         return build_single_node_graph([expression_text])
@@ -52,8 +57,3 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
     def visitDeclarationstatement(self, ctx: CPP14_v2Parser.DeclarationstatementContext):
         declaration_text = self.extract_exact_text(ctx)
         return build_single_node_graph([declaration_text])
-
-    def visitStatementseq2(self, ctx: CPP14_v2Parser.Statementseq2Context):
-        gin1 = self.visit(ctx.statementseq())
-        gin2 = self.visit(ctx.statement())
-        return concat_graphs(gin1, gin2)
