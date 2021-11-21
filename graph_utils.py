@@ -1,6 +1,11 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
+from functools import reduce
+
+
+def compose(*graphs):
+    return reduce(lambda acc, x: nx.compose(acc, x), graphs)
 
 
 def head_node(gin):

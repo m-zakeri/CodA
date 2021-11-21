@@ -1,6 +1,6 @@
 import networkx as nx
 
-from graph_utils import shift_node_labels, head_node, last_node
+from graph_utils import shift_node_labels, head_node, last_node, compose
 
 
 def embed_in_for_structure(gin, initializer, condition, successor):
@@ -13,7 +13,6 @@ def embed_in_for_structure(gin, initializer, condition, successor):
     g_cond = 1
     g_succ = gin_last + 1
     g_last = g_succ + 1
-    g.add_nodes_from([g_head, g_cond, g_succ, g_last, gin_head])
     g.add_edges_from([(g_head, g_cond),
                       (g_cond, gin_head, {"state": "True"}),
                       (g_cond, g_last, {"state": "False"}),
@@ -23,7 +22,7 @@ def embed_in_for_structure(gin, initializer, condition, successor):
     g.nodes[g_cond]["data"] = [condition]
     g.nodes[g_succ]["data"] = [successor]
     g.nodes[g_last]["data"] = []
-    g = nx.compose(g, gin)
+    g = compose(g, gin)
     return g
 
 
@@ -42,7 +41,7 @@ def embed_in_do_while_structure(gin, condition):
     gin.nodes[gin_last]["data"] += [condition]
     g.nodes[g_head]["data"] = []
     g.nodes[g_last]["data"] = []
-    g = nx.compose(g, gin)
+    g = compose(g, gin)
     return g
 
 
@@ -60,7 +59,7 @@ def embed_in_while_structure(gin, condition):
                       (g_head, g_last, {"state": "False"})])
     g.nodes[g_head]["data"] = [condition]
     g.nodes[g_last]["data"] = []
-    g = nx.compose(g, gin)
+    g = compose(g, gin)
     return g
 
 
@@ -78,7 +77,6 @@ def embed_in_if_else_structure(gin_true, gin_false, condition):
     g_head = 0
     g_last = gin_false_last + g_starting_nodes_len
 
-    g.add_nodes_from([g_head, g_last, gin_true_head, gin_false_head])
     g.add_edges_from([(g_head, gin_false_head, {"state": "False"}),
                       (g_head, gin_true_head, {"state": "True"}),
                       (gin_true_last, g_last),
@@ -86,8 +84,7 @@ def embed_in_if_else_structure(gin_true, gin_false, condition):
 
     g.nodes[g_head]["data"] = [condition]
     g.nodes[g_last]["data"] = []
-    g = nx.compose(g, gin_true)
-    g = nx.compose(g, gin_false)
+    g = compose(g, gin_true, gin_false)
     return g
 
 
@@ -102,12 +99,11 @@ def embed_in_if_structure(gin, condition) -> nx.DiGraph:
     g_head = 0
     g_last = gin_last + g_starting_nodes_len
 
-    g.add_nodes_from([g_head, g_last, gin_head])
     g.add_edges_from([(g_head, g_last, {"state": "False"}),
                       (g_head, gin_head, {"state": "True"}),
                       (gin_last, g_last)])
 
     g.nodes[g_head]["data"] = [condition]
     g.nodes[g_last]["data"] = []
-    g = nx.compose(g, gin)
+    g = compose(g, gin)
     return g
