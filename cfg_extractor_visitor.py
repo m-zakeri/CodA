@@ -2,8 +2,8 @@ from antlr4 import *
 
 from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
-from graph_utils import (embed_in_if_structure, build_single_node_graph, concat_graphs, embed_in_if_else_structure,
-                         embed_in_while_structure, embed_in_do_while_structure, embed_in_for_structure)
+from graph_utils import (build_single_node_graph, concat_graphs)
+from lang_structures import *
 
 
 class CFGExtractorVisitor(CPP14_v2Visitor):
