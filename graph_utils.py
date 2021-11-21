@@ -44,7 +44,7 @@ def embed_in_do_while_structure(gin, condition):
     g_end = gin_end + 1
     g.add_nodes_from([g_start, g_end, gin_start])
     g.add_edges_from([(g_start, gin_start),
-                      (gin_start, gin_start, {"state": "True"}),
+                      (gin_end, gin_start, {"state": "True"}),
                       (gin_end, g_end, {"state": "False"})])
     gin.nodes[gin_end]["data"] += [condition]
     g.nodes[g_start]["data"] = []
