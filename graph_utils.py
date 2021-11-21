@@ -17,7 +17,7 @@ def shift_node_labels(gin, n):
 
 def build_single_node_graph(data):
     g = nx.DiGraph()
-    g.add_node(0, data=data)
+    g.add_node(0, data=[data])
     return g
 
 

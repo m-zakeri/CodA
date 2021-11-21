@@ -63,8 +63,8 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
 
     def visitExpressionstatement(self, ctx: CPP14_v2Parser.ExpressionstatementContext):
         expression_text = self.extract_exact_text(ctx)
-        return build_single_node_graph([expression_text])
+        return build_single_node_graph(expression_text)
 
     def visitDeclarationstatement(self, ctx: CPP14_v2Parser.DeclarationstatementContext):
         declaration_text = self.extract_exact_text(ctx)
-        return build_single_node_graph([declaration_text])
+        return build_single_node_graph(declaration_text)
