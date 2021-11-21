@@ -34,6 +34,30 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     return g
 
 
+def embed_in_for_structure(gin, initializer, condition, successor):
+    g = nx.DiGraph()
+    g_starting_nodes_len = 2
+    gin = shift_node_labels(gin, g_starting_nodes_len)
+    gin_head = head_node(gin)
+    gin_last = last_node(gin)
+    g_head = 0
+    g_cond = 1
+    g_succ = gin_last + 1
+    g_last = g_succ + 1
+    g.add_nodes_from([g_head, g_cond, g_succ, g_last, gin_head])
+    g.add_edges_from([(g_head, g_cond),
+                      (g_cond, gin_head, {"state": "True"}),
+                      (g_cond, g_last, {"state": "False"}),
+                      (gin_last, g_succ),
+                      (g_succ, g_cond)])
+    g.nodes[g_head]["data"] = [initializer]
+    g.nodes[g_cond]["data"] = [condition]
+    g.nodes[g_succ]["data"] = [successor]
+    g.nodes[g_last]["data"] = []
+    g = nx.compose(g, gin)
+    return g
+
+
 def embed_in_do_while_structure(gin, condition):
     g = nx.DiGraph()
     g_starting_nodes_len = 1

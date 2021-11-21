@@ -3,7 +3,7 @@ from antlr4 import *
 from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
 from graph_utils import (embed_in_if_structure, build_single_node_graph, concat_graphs, embed_in_if_else_structure,
-                         embed_in_while_structure, embed_in_do_while_structure)
+                         embed_in_while_structure, embed_in_do_while_structure, embed_in_for_structure)
 
 
 class CFGExtractorVisitor(CPP14_v2Visitor):
@@ -52,6 +52,13 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         condition = self.extract_exact_text(ctx.expression())
         gin = self.visit(ctx.statement())
         return embed_in_do_while_structure(gin, condition)
+
+    def visitIterationstatement3(self, ctx: CPP14_v2Parser.Iterationstatement3Context):
+        init = self.extract_exact_text(ctx.forinitstatement())
+        condition = self.extract_exact_text(ctx.condition())
+        successor = self.extract_exact_text(ctx.expression())
+        gin = self.visit(ctx.statement())
+        return embed_in_for_structure(gin, init, condition, successor)
 
     def visitStatementseq1(self, ctx: CPP14_v2Parser.Statementseq1Context):
         return self.visit(ctx.statement())
