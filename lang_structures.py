@@ -126,8 +126,8 @@ def embed_in_switch_structure(gin: nx.DiGraph, condition):
     g.add_edges_from([(g_head, head_node(h), {"state": case.getText()}) for h, case in zip(hs, cases)])
 
     with_breaks, trails = partition(lambda h: any(is_break(ctx) for ctx in h.nodes[last_node(h)]["data"]), hs[:-1])
-    with_break = with_breaks + [hs[-1]]
-    g.add_edges_from([(last_node(h), g_last) for h in with_break])
+    with_breaks.append(hs[-1])
+    g.add_edges_from([(last_node(h), g_last) for h in with_breaks])
     g.add_edges_from([(last_node(h), head_node(hs[hs.index(h) + 1])) for h in trails])
 
     g.nodes[g_head]["data"] = [condition]
