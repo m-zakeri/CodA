@@ -33,7 +33,7 @@ def embed_in_do_while_structure(gin, condition):
     gin_head = head_node(gin)
     gin_last = last_node(gin)
     g_head = 0
-    g_last = gin_last + g_starting_nodes_len
+    g_last = gin_last + 1
     g.add_nodes_from([g_head, g_last, gin_head])
     g.add_edges_from([(g_head, gin_head),
                       (gin_last, gin_head, {"state": "True"}),
@@ -51,13 +51,13 @@ def embed_in_while_structure(gin, condition):
     gin = shift_node_labels(gin, g_starting_nodes_len)
     gin_head = head_node(gin)
     gin_last = last_node(gin)
-    g_head = 0
-    g_last = gin_last + g_starting_nodes_len
-    g.add_nodes_from([g_head, g_last, gin_head])
-    g.add_edges_from([(gin_last, g_head),
-                      (g_head, gin_head, {"state": "True"}),
-                      (g_head, g_last, {"state": "False"})])
-    g.nodes[g_head]["data"] = [condition]
+    g_last = gin_last + 1
+    g.add_edges_from([(g_head, g_cond),
+                      (g_cond, gin_head, {"state": "True"}),
+                      (g_cond, g_last, {"state": "False"}),
+                      (gin_last, g_cond)])
+    g.nodes[g_head]["data"] = []
+    g.nodes[g_cond]["data"] = [condition]
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
     return g
