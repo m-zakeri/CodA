@@ -2,17 +2,17 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 from functools import reduce
+from rule_utils import is_break, extract_exact_text
 
 
 def split_on_break(gin: nx.DiGraph):
     g = gin.copy()
     for label, data in gin.nodes(data="data"):
-        for (text, line) in data:
-            print(text)
-            if "break;" == text:
+        for ctx in data:
+            if is_break(ctx):
                 g.remove_edges_from([(label, adj) for adj in gin.adj[label]])
                 g.add_edge(label, last_node(gin))
-                g.nodes[label]["data"] = data[:data.index((text, line))]
+                g.nodes[label]["data"] = data[:data.index(ctx)]
                 break
     return g
 
