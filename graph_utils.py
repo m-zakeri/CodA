@@ -51,9 +51,15 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     return g
 
 
-def draw_CFG(graph):
+def draw_CFG(graph, token_stream=None):
     pos = graphviz_layout(graph, prog="dot")
-    node_labels = {node: args["data"] for node, args in graph.nodes.data()}
+    # pos = nx.spring_layout(graph)
+    if token_stream:
+        texize = lambda xs: list(map(lambda x: extract_exact_text(token_stream, x), xs))
+    else:
+        texize = lambda xs: xs
+
+    node_labels = {node: texize(args["data"]) for node, args in graph.nodes.data()}
     edge_labels = {(f, t): args["state"] for f, t, args in graph.edges.data() if args.get("state")}
     nx.draw(graph,
             pos=pos,
