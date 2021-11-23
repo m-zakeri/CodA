@@ -1,6 +1,9 @@
+import networkx
 import networkx as nx
 
-from graph_utils import shift_node_labels, head_node, last_node, compose, split_on_break, draw_CFG
+from gen.CPP14_v2Parser import CPP14_v2Parser
+from graph_utils import shift_node_labels, head_node, last_node, compose, split_on_break, draw_CFG, reorder_node_labels
+from rule_utils import is_break
 
 
 def embed_in_for_structure(gin, initializer, condition, successor):
@@ -110,3 +113,56 @@ def embed_in_if_structure(gin, condition) -> nx.DiGraph:
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
     return g
+
+
+def embed_in_switch_structure(gin: nx.DiGraph, condition):
+    g = nx.DiGraph()
+    g_head = 0
+    g_starting_nodes_len = 1
+    sub_graphs, cases = extract_case_sub_graphs(gin)
+    lengths = [len(h) for h in sub_graphs]
+    g_last = sum(lengths) + 1
+    hs = [shift_node_labels(sub_graphs[i], sum(lengths[:i]) + g_starting_nodes_len) for i in range(len(sub_graphs))]
+    g.add_edges_from([(g_head, head_node(h), {"state": case.getText()}) for h, case in zip(hs, cases)])
+
+    with_breaks, trails = partition(lambda h: any(is_break(ctx) for ctx in h.nodes[last_node(h)]["data"]), hs[:-1])
+    with_break = with_breaks + [hs[-1]]
+    g.add_edges_from([(last_node(h), g_last) for h in with_break])
+    g.add_edges_from([(last_node(h), head_node(hs[hs.index(h) + 1])) for h in trails])
+
+    g.nodes[g_head]["data"] = [condition]
+    g.nodes[g_last]["data"] = []
+    g = compose(g, *hs)
+    g = split_on_break(g)
+    return g
+
+
+def partition(predicate, iterator):
+    yes, no = [], []
+    for e in iterator:
+        if predicate(e):
+            yes.append(e)
+        else:
+            no.append(e)
+    return yes, no
+
+
+def case_indices(gin):
+    return zip(*[(l, d[0]) for l, d in gin.nodes(data="data") if
+                 d and (isinstance(d[0], CPP14_v2Parser.ConstantexpressionContext)
+                        or d[0].getText() == "default")])
+
+
+def extract_case_sub_graphs(gin):
+    indices, cases = case_indices(gin)
+    case_ranges = pair_case_indices(indices, last_node(gin))
+    sub_graphs = [reorder_node_labels(gin.subgraph(range(f, t))) for f, t in case_ranges]
+    return sub_graphs, cases
+
+
+def pair_case_indices(iterator, ending):
+    start_indices = map(lambda x: x + 1, iterator)
+    end_indices = list(iterator)
+    end_indices = end_indices[1:]
+    end_indices.append(ending + 1)
+    return list(zip(start_indices, end_indices))

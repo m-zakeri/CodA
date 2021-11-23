@@ -1,8 +1,7 @@
 from antlr4 import *
 
-from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
-from graph_utils import build_single_node_graph, concat_graphs, solve_null_nodes
+from graph_utils import build_single_node_graph, concat_graphs, solve_null_nodes, build_isolated_node_graph
 from lang_structures import *
 
 
@@ -39,6 +38,11 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         gin_else = self.visit(else_body)
         return embed_in_if_else_structure(gin_if, gin_else, condition)
 
+    def visitSelectionstatement3(self, ctx: CPP14_v2Parser.Selectionstatement3Context):
+        condition = ctx.condition()
+        gin = self.visit(ctx.statement())
+        return embed_in_switch_structure(gin, condition)
+
     def visitIterationstatement1(self, ctx: CPP14_v2Parser.Iterationstatement1Context):
         condition = ctx.condition()
         gin = self.visit(ctx.statement())
@@ -72,3 +76,9 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
 
     def visitDeclarationstatement(self, ctx: CPP14_v2Parser.DeclarationstatementContext):
         return build_single_node_graph(ctx)
+
+    def visitLabeledstatement2(self, ctx: CPP14_v2Parser.Labeledstatement2Context):
+        return build_isolated_node_graph(ctx.constantexpression(), ctx.statement())
+
+    def visitLabeledstatement3(self, ctx: CPP14_v2Parser.Labeledstatement3Context):
+        return build_isolated_node_graph(ctx.Default(), ctx.statement())

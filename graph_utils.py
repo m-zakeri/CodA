@@ -65,9 +65,9 @@ def head_node(gin: nx.DiGraph) -> int: return min(gin.nodes)
 def last_node(gin: nx.DiGraph) -> int: return max(gin.nodes)
 
 
-def build_single_node_graph(data):
+def build_single_node_graph(data=None):
     g = nx.DiGraph()
-    g.add_node(0, data=[data])
+    g.add_node(0, data=[data] if data else [])
     return g
 
 
@@ -84,8 +84,8 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
 
 
 def draw_CFG(graph):
-    # pos = graphviz_layout(graph, prog="dot")
-    pos = nx.spring_layout(graph)
+    pos = graphviz_layout(graph, prog="dot")
+    # pos = nx.spring_layout(graph)
     texize = lambda xs: list(map(lambda x: x.getText(), xs))
     node_labels = {node: (node, texize(args["data"])) for node, args in graph.nodes.data()}
     edge_labels = {(f, t): args["state"] for f, t, args in graph.edges.data() if args.get("state")}
@@ -99,3 +99,12 @@ def draw_CFG(graph):
     nx.draw_networkx_labels(graph, pos=pos, labels=node_labels, horizontalalignment="left")
     nx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=edge_labels, font_weight="bold", label_pos=0.2)
     plt.show()
+
+
+def build_isolated_node_graph(to_isolate, body):
+    g = nx.DiGraph()
+    g.add_nodes_from([(0, {"data": []}),
+                      (1, {"data": [to_isolate]}),
+                      (2, {"data": [body]})])
+    g.add_edges_from([(0, 1), (1, 2)])
+    return g
