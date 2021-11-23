@@ -1,6 +1,6 @@
 import networkx as nx
 
-from graph_utils import shift_node_labels, head_node, last_node, compose
+from graph_utils import shift_node_labels, head_node, last_node, compose, split_on_break, draw_CFG
 
 
 def embed_in_for_structure(gin, initializer, condition, successor):
@@ -23,6 +23,7 @@ def embed_in_for_structure(gin, initializer, condition, successor):
     g.nodes[g_succ]["data"] = [successor]
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_break(g)
     return g
 
 
@@ -42,12 +43,14 @@ def embed_in_do_while_structure(gin, condition):
     g.nodes[g_head]["data"] = []
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_break(g)
     return g
 
 
 def embed_in_while_structure(gin, condition):
     g = nx.DiGraph()
-    g_starting_nodes_len = 1
+    g_head, g_cond = 0, 1
+    g_starting_nodes_len = 2
     gin = shift_node_labels(gin, g_starting_nodes_len)
     gin_head = head_node(gin)
     gin_last = last_node(gin)
@@ -60,6 +63,7 @@ def embed_in_while_structure(gin, condition):
     g.nodes[g_cond]["data"] = [condition]
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_break(g)
     return g
 
 
