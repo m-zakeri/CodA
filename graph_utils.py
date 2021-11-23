@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 from functools import reduce
-from rule_utils import is_break, extract_exact_text
+from rule_utils import is_break
 
 
 def split_on_break(gin: nx.DiGraph) -> nx.DiGraph:
@@ -17,18 +17,6 @@ def split_on_break(gin: nx.DiGraph) -> nx.DiGraph:
     return g
 
 
-def reorder_node_labels(gin: nx.DiGraph) -> nx.DiGraph:
-    return nx.relabel_nodes(gin, {old: new for new, old in enumerate(sorted(gin.nodes))})
-
-
-def is_node_unreachable(gin: nx.DiGraph, n: int) -> bool:
-    return gin.in_degree[n] == 0
-
-
-def is_null_node(gin: nx.DiGraph, n: int) -> bool:
-    return gin.nodes[n]["data"] == []
-
-
 def solve_null_nodes(gin: nx.DiGraph) -> nx.DiGraph:
     g = remove_null_nodes(gin)
     g = reorder_node_labels(g)
@@ -39,7 +27,7 @@ def remove_null_nodes(gin: nx.DiGraph) -> nx.DiGraph:
     g = gin.copy()
     for label, ns in gin.adj.items():
         for n in ns:
-            if is_null_node(gin, n):
+            if is_node_null(gin, n):
                 g = shrink_path(g, label, n)
     return g
 
@@ -54,20 +42,27 @@ def shrink_path(gin: nx.DiGraph, from_node: int, to_node: int) -> nx.DiGraph:
     return g
 
 
-def compose(*graphs):
-    return reduce(lambda acc, x: nx.compose(acc, x), graphs)
+def reorder_node_labels(gin: nx.DiGraph) -> nx.DiGraph:
+    return nx.relabel_nodes(gin, {old: new for new, old in enumerate(sorted(gin.nodes))})
 
 
-def head_node(gin):
-    return min(gin.nodes)
-
-
-def last_node(gin):
-    return max(gin.nodes)
-
-
-def shift_node_labels(gin, n):
+def shift_node_labels(gin: nx.DiGraph, n: int) -> nx.DiGraph:
     return nx.relabel_nodes(gin, {i: i + n for i in gin.nodes})
+
+
+def is_node_unreachable(gin: nx.DiGraph, n: int) -> bool: return gin.in_degree[n] == 0
+
+
+def is_node_null(gin: nx.DiGraph, n: int) -> bool: return gin.nodes[n]["data"] == []
+
+
+def compose(*graphs) -> nx.DiGraph: return reduce(lambda acc, x: nx.compose(acc, x), graphs)
+
+
+def head_node(gin: nx.DiGraph) -> int: return min(gin.nodes)
+
+
+def last_node(gin: nx.DiGraph) -> int: return max(gin.nodes)
 
 
 def build_single_node_graph(data):
@@ -83,7 +78,7 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     gin2_head = head_node(gin2)
     data = gin1.nodes[gin1_last]["data"] + gin2.nodes[gin2_head]["data"]
 
-    g = nx.compose(gin1, gin2)
+    g = compose(gin1, gin2)
     g.nodes[gin1_last]["data"] = data
     return g
 
