@@ -88,15 +88,11 @@ def concat_graphs(gin1: nx.DiGraph, gin2: nx.DiGraph):
     return g
 
 
-def draw_CFG(graph, token_stream=None):
-    pos = graphviz_layout(graph, prog="dot")
-    # pos = nx.spring_layout(graph)
-    if token_stream:
-        texize = lambda xs: list(map(lambda x: extract_exact_text(token_stream, x), xs))
-    else:
-        texize = lambda xs: xs
-
-    node_labels = {node: texize(args["data"]) for node, args in graph.nodes.data()}
+def draw_CFG(graph):
+    # pos = graphviz_layout(graph, prog="dot")
+    pos = nx.spring_layout(graph)
+    texize = lambda xs: list(map(lambda x: x.getText(), xs))
+    node_labels = {node: (node, texize(args["data"])) for node, args in graph.nodes.data()}
     edge_labels = {(f, t): args["state"] for f, t, args in graph.edges.data() if args.get("state")}
     nx.draw(graph,
             pos=pos,
@@ -106,5 +102,5 @@ def draw_CFG(graph, token_stream=None):
             font_color="black",
             edgecolors="tab:gray")
     nx.draw_networkx_labels(graph, pos=pos, labels=node_labels, horizontalalignment="left")
-    nx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=edge_labels, font_weight="bold")
+    nx.draw_networkx_edge_labels(graph, pos=pos, edge_labels=edge_labels, font_weight="bold", label_pos=0.2)
     plt.show()
