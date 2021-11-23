@@ -60,6 +60,10 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         gin = self.visit(ctx.statement())
         return embed_in_for_structure(gin, init, condition, successor)
 
+    def visitJumpstatement1(self, ctx: CPP14_v2Parser.Jumpstatement1Context):
+        jump_text = self.extract_exact_text(ctx)
+        return build_single_node_graph(jump_text)
+
     def visitStatementseq1(self, ctx: CPP14_v2Parser.Statementseq1Context):
         return self.visit(ctx.statement())
 

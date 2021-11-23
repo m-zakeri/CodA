@@ -4,6 +4,19 @@ from networkx.drawing.nx_pydot import graphviz_layout
 from functools import reduce
 
 
+def split_on_break(gin: nx.DiGraph):
+    g = gin.copy()
+    for label, data in gin.nodes(data="data"):
+        for (text, line) in data:
+            print(text)
+            if "break;" == text:
+                g.remove_edges_from([(label, adj) for adj in gin.adj[label]])
+                g.add_edge(label, last_node(gin))
+                g.nodes[label]["data"] = data[:data.index((text, line))]
+                break
+    return g
+
+
 def compose(*graphs):
     return reduce(lambda acc, x: nx.compose(acc, x), graphs)
 
