@@ -2,7 +2,7 @@ from antlr4 import *
 
 from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
-from graph_utils import (build_single_node_graph, concat_graphs)
+from graph_utils import build_single_node_graph, concat_graphs, solve_null_nodes
 from lang_structures import *
 
 
@@ -11,7 +11,8 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         self.token_stream = common_token_stream
 
     def visitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
-        return self.visit(ctx.declarationseq())
+        gin = self.visit(ctx.declarationseq())
+        return solve_null_nodes(gin)
 
     # todo: implement seq2 as well
     def visitDeclarationseq1(self, ctx: CPP14_v2Parser.Declarationseq1Context):
