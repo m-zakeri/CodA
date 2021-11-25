@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 from functools import reduce
-from rule_utils import is_break, is_return, is_continue
+from rule_utils import is_break, is_return, is_continue, is_throw
 
 
 def split_on_continue(gin: nx.DiGraph, continue_return) -> nx.DiGraph:
@@ -11,6 +11,10 @@ def split_on_continue(gin: nx.DiGraph, continue_return) -> nx.DiGraph:
 
 def split_on_break(gin: nx.DiGraph) -> nx.DiGraph:
     return direct_node_to_if(gin, last_node(gin), is_break)
+
+
+def split_on_throw(gin: nx.DiGraph, throw_return) -> nx.DiGraph:
+    return direct_node_to_if(gin, throw_return, is_throw)
 
 
 def direct_node_to_if(gin: nx.DiGraph, direction_reference, predicate) -> nx.DiGraph:

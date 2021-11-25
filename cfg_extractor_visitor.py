@@ -6,7 +6,7 @@ from gen.CPP14_v2Visitor import CPP14_v2Visitor
 from graph_utils import (solve_null_nodes, draw_CFG, build_single_node_graph, concat_graphs, build_isolated_node_graph)
 from lang_structures import (embed_in_function_structure, embed_in_do_while_structure, embed_in_for_structure,
                              embed_in_switch_structure, embed_in_if_structure, embed_in_if_else_structure,
-                             embed_in_while_structure)
+                             embed_in_while_structure, embed_in_try_catch_structure)
 
 
 class CFGExtractorVisitor(CPP14_v2Visitor):
@@ -64,6 +64,25 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         successor = ctx.expression()
         gin = self.visit(ctx.statement())
         return embed_in_for_structure(gin, init, condition, successor)
+
+    def visitTryblock(self, ctx: CPP14_v2Parser.TryblockContext):
+        g_body = self.visit(ctx.compoundstatement())
+        g_handler_seq = self.visit(ctx.handlerseq())
+        return embed_in_try_catch_structure(g_body, g_handler_seq)
+
+    def visitHandlerseq(self, ctx: CPP14_v2Parser.HandlerseqContext):
+        g_handler = self.visit(ctx.handler())
+        g = g_handler.copy()
+        if ctx.handlerseq():
+            g_handler_seq = self.visit(ctx.handlerseq())
+            g = concat_graphs(g, g_handler_seq)
+        return g
+
+    def visitHandler(self, ctx: CPP14_v2Parser.HandlerContext):
+        return self.visit(ctx.compoundstatement())
+
+    def visitThrowexpression(self, ctx: CPP14_v2Parser.ThrowexpressionContext):
+        return build_single_node_graph(ctx)
 
     def visitJumpstatement1(self, ctx: CPP14_v2Parser.Jumpstatement1Context):
         return build_single_node_graph(ctx)

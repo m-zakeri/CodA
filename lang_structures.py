@@ -3,7 +3,7 @@ import networkx as nx
 from gen.CPP14_v2Parser import CPP14_v2Parser
 from graph_utils import (shift_node_labels,
                          head_node, last_node,
-                         split_on_break, split_on_continue, split_on_return,
+                         split_on_break, split_on_continue, split_on_return, split_on_throw,
                          compose, reorder_node_labels)
 from rule_utils import is_break
 
@@ -179,3 +179,20 @@ def embed_in_function_structure(gin):
     g.add_node(g_last, data=[])
     g.add_edge(last_node(gin), g_last)
     return split_on_return(g)
+
+
+def embed_in_try_catch_structure(g_body, g_handler_seq):
+    g = nx.DiGraph()
+    g_handler_seq = shift_node_labels(g_handler_seq, len(g_body))
+    g_handler_seq_head = head_node(g_handler_seq)
+    g_handler_seq_last = last_node(g_handler_seq)
+    g_body_last = last_node(g_body)
+
+    g_last = g_handler_seq_last + 1
+    g.add_edges_from([(g_body_last, g_last),
+                      (g_handler_seq_last, g_last)])
+    g = compose(g, g_handler_seq, g_body)
+    g.nodes[g_last]["data"] = []
+
+    g = split_on_throw(g, g_handler_seq_head)
+    return g

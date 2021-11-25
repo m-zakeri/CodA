@@ -17,3 +17,7 @@ def is_return(rule: ParserRuleContext) -> bool:
 
 def is_continue(rule: ParserRuleContext) -> bool:
     return rule.start.type == CPP14_v2Lexer.Continue
+
+
+def is_throw(rule: ParserRuleContext) -> bool:
+    return rule.start.type == CPP14_v2Lexer.Throw
