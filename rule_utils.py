@@ -9,3 +9,11 @@ def extract_exact_text(token_stream: CommonTokenStream, rule: ParserRuleContext)
 
 def is_break(rule: ParserRuleContext) -> bool:
     return rule.start.type == CPP14_v2Lexer.Break
+
+
+def is_return(rule: ParserRuleContext) -> bool:
+    return rule.start.type == CPP14_v2Lexer.Return
+
+
+def is_continue(rule: ParserRuleContext) -> bool:
+    return rule.start.type == CPP14_v2Lexer.Continue

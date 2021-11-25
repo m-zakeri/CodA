@@ -2,17 +2,40 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 from functools import reduce
-from rule_utils import is_break
+from rule_utils import is_break, is_return, is_continue
+
+
+def split_on_continue(gin: nx.DiGraph, continue_return) -> nx.DiGraph:
+    return direct_node_to_if(gin, continue_return, is_continue)
 
 
 def split_on_break(gin: nx.DiGraph) -> nx.DiGraph:
+    return direct_node_to_if(gin, last_node(gin), is_break)
+
+
+def direct_node_to_if(gin: nx.DiGraph, direction_reference, predicate) -> nx.DiGraph:
     g = gin.copy()
     for label, data in gin.nodes(data="data"):
         for ctx in data:
-            if is_break(ctx):
+            if predicate(ctx):
+                g.remove_edges_from([(label, adj) for adj in gin.adj[label]])
+                g.add_edge(label, direction_reference)
+                g.nodes[label]["data"] = data[:data.index(ctx)]
+                break
+    return g
+
+
+def split_on_return(gin: nx.DiGraph) -> nx.DiGraph:
+    g = gin.copy()
+    for label, data in gin.nodes(data="data"):
+        for ctx in data:
+            if is_return(ctx):
                 g.remove_edges_from([(label, adj) for adj in gin.adj[label]])
                 g.add_edge(label, last_node(gin))
-                g.nodes[label]["data"] = data[:data.index(ctx)]
+                d = data[:data.index(ctx)]
+                if ctx.expression():
+                    d += [ctx.expression()]
+                g.nodes[label]["data"] = d
                 break
     return g
 
@@ -27,7 +50,7 @@ def remove_null_nodes(gin: nx.DiGraph) -> nx.DiGraph:
     g = gin.copy()
     for label, ns in gin.adj.items():
         for n in ns:
-            if is_node_null(gin, n):
+            if is_node_null(gin, n) and n != last_node(gin):
                 g = shrink_path(g, label, n)
     return g
 

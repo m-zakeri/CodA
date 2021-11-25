@@ -1,8 +1,12 @@
+import networkx as nx
 from antlr4 import *
 
+from gen.CPP14_v2Parser import CPP14_v2Parser
 from gen.CPP14_v2Visitor import CPP14_v2Visitor
-from graph_utils import build_single_node_graph, concat_graphs, solve_null_nodes, build_isolated_node_graph
-from lang_structures import *
+from graph_utils import (solve_null_nodes, draw_CFG, build_single_node_graph, concat_graphs, build_isolated_node_graph)
+from lang_structures import (embed_in_function_structure, embed_in_do_while_structure, embed_in_for_structure,
+                             embed_in_switch_structure, embed_in_if_structure, embed_in_if_else_structure,
+                             embed_in_while_structure)
 
 
 class CFGExtractorVisitor(CPP14_v2Visitor):
@@ -18,7 +22,8 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         return self.visit(ctx.declaration())
 
     def visitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
-        return self.visit(ctx.functionbody())
+        gin = self.visit(ctx.functionbody())
+        return embed_in_function_structure(gin)
 
     def visitCompoundstatement(self, ctx: CPP14_v2Parser.CompoundstatementContext):
         return self.visit(ctx.statementseq())
@@ -61,6 +66,12 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
         return embed_in_for_structure(gin, init, condition, successor)
 
     def visitJumpstatement1(self, ctx: CPP14_v2Parser.Jumpstatement1Context):
+        return build_single_node_graph(ctx)
+
+    def visitJumpstatement2(self, ctx: CPP14_v2Parser.Jumpstatement2Context):
+        return build_single_node_graph(ctx)
+
+    def visitJumpstatement3(self, ctx: CPP14_v2Parser.Jumpstatement3Context):
         return build_single_node_graph(ctx)
 
     def visitStatementseq1(self, ctx: CPP14_v2Parser.Statementseq1Context):

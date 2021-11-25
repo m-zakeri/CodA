@@ -1,8 +1,10 @@
-import networkx
 import networkx as nx
 
 from gen.CPP14_v2Parser import CPP14_v2Parser
-from graph_utils import shift_node_labels, head_node, last_node, compose, split_on_break, draw_CFG, reorder_node_labels
+from graph_utils import (shift_node_labels,
+                         head_node, last_node,
+                         split_on_break, split_on_continue, split_on_return,
+                         compose, reorder_node_labels)
 from rule_utils import is_break
 
 
@@ -25,6 +27,7 @@ def embed_in_for_structure(gin, initializer, condition, successor):
     g.nodes[g_succ]["data"] = [successor]
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_continue(g, g_cond)
     g = split_on_break(g)
     return g
 
@@ -45,6 +48,7 @@ def embed_in_do_while_structure(gin, condition):
     g.nodes[g_head]["data"] = []
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_continue(g, gin_last)
     g = split_on_break(g)
     return g
 
@@ -65,6 +69,7 @@ def embed_in_while_structure(gin, condition):
     g.nodes[g_cond]["data"] = [condition]
     g.nodes[g_last]["data"] = []
     g = compose(g, gin)
+    g = split_on_continue(g, g_cond)
     g = split_on_break(g)
     return g
 
@@ -166,3 +171,11 @@ def pair_case_indices(iterator, ending):
     end_indices = end_indices[1:]
     end_indices.append(ending + 1)
     return list(zip(start_indices, end_indices))
+
+
+def embed_in_function_structure(gin):
+    g = gin.copy()
+    g_last = last_node(gin) + 1
+    g.add_node(g_last, data=[])
+    g.add_edge(last_node(gin), g_last)
+    return split_on_return(g)
