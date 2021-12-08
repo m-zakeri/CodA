@@ -1,60 +1,43 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from networkx.drawing.nx_pydot import graphviz_layout
+import html
+
+import graphviz as gv
+
+from graph_utils import head_node, last_node
+from rule_utils import extract_exact_text
 
 
-def parse_graph(path):
-    with open(path, mode='r') as f:
-        lines = list(map(str.strip, f.readlines()))
-
-    edge_lines = lines[:-2]
-    edges = [t.split(" ") for t in edge_lines]
-    edges = [tuple(map(int, e)) for e in edges]
-
-    node_state_lines = lines[-2:]
-    node_states = [s.split(":") for s in node_state_lines]
-    node_states = [(s[0], int(s[1])) for s in node_states]
-    return edges, node_states
-
-
-def build_graph_from_edges(edges):
-    graph = nx.DiGraph()
-    graph.add_edges_from(edges)
-    return graph
+def build_node_template(node_label, node_contents):
+    return f"""<
+     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+     <tr>
+        <td width="30" height="20" fixedsize="true">{node_label}</td>
+        <td width="9" height="9" fixedsize="true" style="invis" PORT="there"></td>
+        <td width="9" height="9" fixedsize="true" style="invis"></td>
+     </tr>
+     <tr>
+         <td width="30" height="30" fixedsize="true" sides="tlb"></td>
+         <td width="50" height="30" fixedsize="false" sides="bt" PORT="here">{html.escape(str(node_contents))}</td>
+         <td width="30" height="30" fixedsize="true" sides="brt"></td>
+     </tr>
+    </TABLE>
+    >"""
 
 
-def draw_CFG(graph, states):
-    top_down_pos = graphviz_layout(graph, prog="dot")
-    color_map = create_color_map(graph, states)
+def draw_CFG(graph, filename, token_stream, format="png"):
+    gr = gv.Digraph(comment=filename, format=format, node_attr={"shape": "none"})
+    gr.node("start", style="filled", fillcolor="#aaffaa", shape="oval")
 
-    nx.draw(graph,
-            pos=top_down_pos,
-            with_labels=True,
-            font_weight="bold",
-            node_color=color_map,
-            node_size=800,
-            font_color="black",
-            alpha=0.9,
-            edgecolors="tab:gray")
+    for node, args in list(graph.nodes.data())[:-1]:
+        block_contents = stringify_block(token_stream, args)
+        gr.node(str(node), label=build_node_template(node, block_contents))
+    gr.node(str(last_node(graph)), label="end", style="filled", fillcolor="#ffaaaa", shape="oval")
 
-    plt.show()
+    for f, t, args in graph.edges.data():
+        gr.edge(str(f), str(t), label=args.get("state"))
+    gr.edge("start", str(head_node(graph)))
 
-
-def create_color_map(graph, states):
-    color_map = ["white"] * len(graph)
-    for state in states:
-        if state[0] == "initial nodes":
-            color_map[state[1] - 1] = "#c0ffc0"
-        if state[0] == "final nodes":
-            color_map[state[1] - 1] = "yellow"
-    return color_map
+    gr.render(f"test-output/{filename}.gv", view=True)
 
 
-def main():
-    edges, states = parse_graph('CFGS/v2/5/1.txt')
-    g = build_graph_from_edges(edges)
-    draw_CFG(g, states)
-
-
-if __name__ == '__main__':
-    main()
+def stringify_block(token_stream, node_args):
+    return [(rule.start.line, extract_exact_text(token_stream, rule)) for rule in node_args["data"]]
