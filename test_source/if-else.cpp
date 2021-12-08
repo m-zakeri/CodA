@@ -1,27 +1,14 @@
 int main()
 {
-    int tr, fa;
-    int inner;
-    fa = 1;
-    if(a)
+    int a = 0, b = 0;
+
+    if (condition)
     {
-        tr++;
-        if(b) c--;
-        tr--;
+        a++;
+        b--;
     }
-    else fa++;
-    if(a > 2)
-    {
-        tr++;
-        tr--;
-        tr += 1;
-        if (tr)
-        {
-            inner++;
-            if (fa) fa--;
-            inner--;
-        }
-        fa += 2;
-    }
-    end++;
+    else
+        a--;
+
+    return a + b;
 }

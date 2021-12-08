@@ -28,7 +28,6 @@ class CFGExtractorVisitor(CPP14_v2Visitor):
     def visitCompoundstatement(self, ctx: CPP14_v2Parser.CompoundstatementContext):
         return self.visit(ctx.statementseq())
 
-    # todo: add conditions
     def visitSelectionstatement1(self, ctx: CPP14_v2Parser.Selectionstatement1Context):
         condition = ctx.condition()
         if_body = ctx.statement()
