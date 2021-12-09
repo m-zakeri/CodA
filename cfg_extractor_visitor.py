@@ -12,18 +12,11 @@ from lang_structures import (embed_in_function_structure, embed_in_do_while_stru
 class CFGExtractorVisitor(CPP14_v2Visitor):
     def __init__(self, common_token_stream: CommonTokenStream):
         self.token_stream = common_token_stream
-
-    def visitTranslationunit(self, ctx: CPP14_v2Parser.TranslationunitContext):
-        gin = self.visit(ctx.declarationseq())
-        return solve_null_nodes(gin)
-
-    # todo: implement seq2 as well
-    def visitDeclarationseq1(self, ctx: CPP14_v2Parser.Declarationseq1Context):
-        return self.visit(ctx.declaration())
+        self.functions = {}
 
     def visitFunctiondefinition(self, ctx: CPP14_v2Parser.FunctiondefinitionContext):
         gin = self.visit(ctx.functionbody())
-        return embed_in_function_structure(gin)
+        self.functions[ctx.declarator()] = embed_in_function_structure(gin)
 
     def visitCompoundstatement(self, ctx: CPP14_v2Parser.CompoundstatementContext):
         return self.visit(ctx.statementseq())
