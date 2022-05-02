@@ -8,6 +8,7 @@ Last update: July 19, 2020
 Edition 1
 
 
+
 In this tutorial we describe a primary task in source code transformation, _i.e._, program instrumentation, which is one of the CodA features.
 
 The task can be performed by properly applying compiler techniques, adding required code snippets at specific source code places. Instrumentation is the fundamental prerequisite for almost all dynamic analysis types. Let us begin with a simple case in which the purpose of instrumentation is to log the executed path of the program control flow graph for each execution. Consider the following C++ program used to calculate the greatest common divider (GCD) of two integers:
@@ -179,4 +180,6 @@ After the instrumenting was completed, the program must be compiled then execute
 
 *Figure 5. An example of executing the GCD program after instrumenting.*
 
+
+## Conclusion
 
