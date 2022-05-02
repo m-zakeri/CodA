@@ -182,4 +182,6 @@ After the instrumenting was completed, the program must be compiled then execute
 
 
 ## Conclusion
+We show that using the ANTLR listener mechanism; it would be very simple to instrument the real-world CPP programs. A similar technique can be used to instrument the source code written in other programming languages such as Java and C#.
+In the [next tutorial](program_instrumentation.md), we discuss using ANTLR for static analysis of the source code and computing some source code metrics.
 
