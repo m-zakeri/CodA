@@ -1,6 +1,11 @@
 # Program instrumentation
 
- Edition 1 (July 19, 2020)
+
+By: Morteza Zakeri
+  
+Last update: July 19, 2020
+
+Edition 1
 
 
 In this tutorial we describe a primary task in source code transformation, _i.e._, program instrumentation, which is one of the CodA features.
@@ -133,26 +138,37 @@ Now the implementation of our `InstrumentationListener` has been finished. The n
 
 Figure 4 shows the body of the main python script required to create and run our efficient yet straightforward instrumenting tool. A comment line has explained each line of code, and therefore we omit extra descriptions. The only important note is that the instrumented code, _i.e._, the modified source code, is accessible by `token_stream_rewirter` object. The `getDefualtText()` of `token_stream_rewirter` object is called to retrieve the new source code in Line 18.
 
-```python
+```Python
+from antlr4 import *
+
 # Step 1: Convert input to a byte stream
 stream = InputStream(input_string)
+
 # Step 2: Create lexer
 lexer = test_v2Lexer(stream)
+
 # Step 3: Create a list of tokens
 token_stream = CommonTokenStream(lexer)
+
 # Step 4: Create parser
 parser = test_v2Parser(token_stream)
+
 # Step 5: Create parse tree
 parse_tree = parser.start()
+
 # Step 6: Adding a listener
 instrument_listener = InstrumentationListener(common_token_stream=self.common_token_stream)
-# Step 7: Create parese tree walker
+
+# Step 7: Create parse tree walker
 walker = ParseTreeWalker()
-# Step 8: Walk parse tree (to instrumnet the code)
+
+# Step 8: Walk parse tree, attaching the listener to instrument the code
 walker.walk(listener=instrument_listener, t=parse_tree)
+
 # Step 9: 
 new_source_code = instrument_listener.token_stream_rewriter.getDefaultText()
 print(new_source_code)
+
 ```
 *Figure 4. The driver code for instrumenting.*
 
