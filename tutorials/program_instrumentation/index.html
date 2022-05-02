@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Code analysis toolkit">
+        <meta name="description" content="Source code analysis and synthesis toolkit">
       
       
       
@@ -20,7 +20,7 @@
     
     
       
-        <title>Program instrumentation - CodA Docs (v0.1.0dev)</title>
+        <title>Program instrumentation - CodA Docs (v0.2.0dev)</title>
       
     
     
@@ -84,7 +84,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="CodA Docs (v0.1.0dev)" class="md-header__button md-logo" aria-label="CodA Docs (v0.1.0dev)" data-md-component="logo">
+    <a href="../.." title="CodA Docs (v0.2.0dev)" class="md-header__button md-logo" aria-label="CodA Docs (v0.2.0dev)" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -97,7 +97,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            CodA Docs (v0.1.0dev)
+            CodA Docs (v0.2.0dev)
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -203,13 +203,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="CodA Docs (v0.1.0dev)" class="md-nav__button md-logo" aria-label="CodA Docs (v0.1.0dev)" data-md-component="logo">
+    <a href="../.." title="CodA Docs (v0.2.0dev)" class="md-nav__button md-logo" aria-label="CodA Docs (v0.2.0dev)" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
 
     </a>
-    CodA Docs (v0.1.0dev)
+    CodA Docs (v0.2.0dev)
   </label>
   
     <div class="md-nav__source">
@@ -249,10 +249,49 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      <label class="md-nav__link" for="__nav_2">
+        Analysis modules
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Analysis modules" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Analysis modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../benchmarks/" class="md-nav__link">
-        Benchmarks
+      <a href="../../analysis_modules/cfg/cfg_extractor/" class="md-nav__link">
+        Program control flow graph extractor
       </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../analysis_modules/paths/prime_path_extractor/" class="md-nav__link">
+        Program prime paths extractor
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -309,9 +348,39 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Program instrumentation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Program instrumentation
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -385,6 +454,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../../benchmarks/" class="md-nav__link">
+        Benchmarks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="https://github.com/m-zakeri/CodA/issues" class="md-nav__link">
         Issue tracker
       </a>
@@ -411,6 +495,21 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -427,7 +526,9 @@
                 
                 
                 <h1 id="program-instrumentation">Program instrumentation</h1>
-<p>Edition 1 (July 19, 2020)</p>
+<p>By: Morteza Zakeri</p>
+<p>Last update: July 19, 2020</p>
+<p>Edition 1</p>
 <p>In this tutorial we describe a primary task in source code transformation, <em>i.e.</em>, program instrumentation, which is one of the CodA features.</p>
 <p>The task can be performed by properly applying compiler techniques, adding required code snippets at specific source code places. Instrumentation is the fundamental prerequisite for almost all dynamic analysis types. Let us begin with a simple case in which the purpose of instrumentation is to log the executed path of the program control flow graph for each execution. Consider the following C++ program used to calculate the greatest common divider (GCD) of two integers:</p>
 <pre><code class="language-cpp">
@@ -533,30 +634,44 @@ logFile &lt;&lt; &quot;p2&quot; &lt;&lt; std::endl;
 <p>Line 22 adds <code>new_code</code> to the current source code.
 Now the implementation of our <code>InstrumentationListener</code> has been finished. The next step is to write the main driver for the instrumentation tool and connect this listener to the parse tree walker. </p>
 <p>Figure 4 shows the body of the main python script required to create and run our efficient yet straightforward instrumenting tool. A comment line has explained each line of code, and therefore we omit extra descriptions. The only important note is that the instrumented code, <em>i.e.</em>, the modified source code, is accessible by <code>token_stream_rewirter</code> object. The <code>getDefualtText()</code> of <code>token_stream_rewirter</code> object is called to retrieve the new source code in Line 18.</p>
-<pre><code class="language-python"># Step 1: Convert input to a byte stream
+<pre><code class="language-Python">from antlr4 import *
+
+# Step 1: Convert input to a byte stream
 stream = InputStream(input_string)
+
 # Step 2: Create lexer
 lexer = test_v2Lexer(stream)
+
 # Step 3: Create a list of tokens
 token_stream = CommonTokenStream(lexer)
+
 # Step 4: Create parser
 parser = test_v2Parser(token_stream)
+
 # Step 5: Create parse tree
 parse_tree = parser.start()
+
 # Step 6: Adding a listener
 instrument_listener = InstrumentationListener(common_token_stream=self.common_token_stream)
-# Step 7: Create parese tree walker
+
+# Step 7: Create parse tree walker
 walker = ParseTreeWalker()
-# Step 8: Walk parse tree (to instrumnet the code)
+
+# Step 8: Walk parse tree, attaching the listener to instrumented_programs the code
 walker.walk(listener=instrument_listener, t=parse_tree)
+
 # Step 9: 
 new_source_code = instrument_listener.token_stream_rewriter.getDefaultText()
 print(new_source_code)
+
 </code></pre>
 <p><em>Figure 4. The driver code for instrumenting.</em></p>
 <p>After the instrumenting was completed, the program must be compiled then executed to apply the modification. Figure 5 shows an example of executing with a sample input. As shown in Figure 5, the executed path for inputs 24 and 18 are logged into the console, in addition to the program output, which is 6 in this example. The sequence of the printed path shows the order in which basic blocks were executed. We may change the instrumentation to capture more complicated information about runtime. However, the techniques and principles will be the same used in this simple example. Interested readers may find more exercise about instrumentation at the end of this chapter.</p>
 <p><img alt="Figure 5" src="../../figs/gcd_execution_output.png" /></p>
 <p><em>Figure 5. An example of executing the GCD program after instrumenting.</em></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We show that using the ANTLR listener mechanism; it would be very simple to instrument the real-world CPP programs. A similar technique can be used to instrument the source code written in other programming languages such as Java and C#.
+In the <a href="./">next tutorial</a>, we discuss using ANTLR for static analysis of the source code and computing some source code metrics.</p>
                 
               
               
