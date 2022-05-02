@@ -1,7 +1,6 @@
 //in the name of allah
 #include<iostream>
 
-//in the name of allah
 #include <fstream>
 std::ofstream logFile("log_file.txt");
 

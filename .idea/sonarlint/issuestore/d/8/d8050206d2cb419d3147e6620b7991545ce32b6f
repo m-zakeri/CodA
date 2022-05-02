@@ -1,6 +1,0 @@
-
-kpython:S2208"GImport only needed names or import the module and then use its members.(ÒÓ·ƒùÿÿÿÿ8ŞÅŠÀ.
-kpython:S2208"GImport only needed names or import the module and then use its members.(´‘œıÿÿÿÿ8ŞÅŠÀ.
-tpython:S1192/"PDefine a constant instead of duplicating this literal '\nlogFile << "p' 3 times.(º¨„Üûÿÿÿÿ8’Ò¿ŠÀ.
-vpython:S1192/"RDefine a constant instead of duplicating this literal '" << std::endl;\n' 4 times.(º¨„Üûÿÿÿÿ8’Ò¿ŠÀ.
-fpython:S2208"GImport only needed names or import the module and then use its members.(„ºÒÏ8’Ò¿ŠÀ.

@@ -1,13 +1,15 @@
-//in the name of allah
+/*
+The simplest CPP file for testing control-flow-graph extraction program
+*/
+
 #include<iostream>
 
-//in the name of allah
 #include <fstream>
 std::ofstream logFile("log_file.txt");
 
 using namespace std;
 
-/*  */
+/* function number 1 */
 int main()
 {
 logFile << "1 1" << std::endl;
@@ -25,6 +27,7 @@ logFile << "1 4" << std::endl;
 	return 0;
 }
 
+/* function number 2 */
 int f1()
 {
 logFile << "2 1" << std::endl;
@@ -43,7 +46,7 @@ logFile << "2 4" << std::endl;
     return i;
 }
 
-
+/* function number 3 */
 int f2()
 {
 logFile << "3 1" << std::endl;
@@ -69,4 +72,30 @@ logFile << "3 7" << std::endl;
 
 
     return i;
+}
+
+
+void f3 ()
+{
+logFile << "4 1" << std::endl;
+
+
+     if (logFile << "4 2" << std::endl && (i < j))
+        {
+logFile << "4 3" << std::endl;
+x++;
+}
+     else {
+logFile << "4 4" << std::endl;
+if(logFile << "4 5" << std::endl && (j>10))
+         {
+logFile << "4 6" << std::endl;
+y++;
+}
+logFile << "4 7" << std::endl;
+
+}
+logFile << "4 8" << std::endl;
+
+
 }
