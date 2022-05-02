@@ -1,8 +1,0 @@
-1 2
-2 3
-3 3
-3 4
-2 4
-4 2
-initial nodes:1
-final nodes:5
