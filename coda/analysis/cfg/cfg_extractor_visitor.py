@@ -1,13 +1,43 @@
+"""
+
+ANTLR visitor to build control flow graph (CFG) for C++ functions
+
+The improved version of the `cfg_extractor_listener1.py` module
+
+
+## Changelog:
+
+### version 1.0.1
+- Refactor the module
+
+### version 1.0.0
+
+
+"""
+
+__version__ = '1.0.1'
+__author__ = 'Babaei'
+
 from antlr4 import CommonTokenStream
 
-from src.antlr.gen.CPP14_v2Parser import CPP14_v2Parser
-from src.antlr.gen.CPP14_v2Visitor import CPP14_v2Visitor
-from src.cfg_extractor.lang_structures import (embed_in_function_structure, embed_in_do_while_structure,
-                                               embed_in_for_structure,
-                                               embed_in_switch_structure, embed_in_if_structure,
-                                               embed_in_if_else_structure,
-                                               embed_in_while_structure, embed_in_try_catch_structure)
-from src.graph.utils import (build_single_node_graph, concat_graphs, build_isolated_node_graph)
+from coda.antlr_gen.cpp_parser.CPP14_v2Parser import CPP14_v2Parser
+from coda.antlr_gen.cpp_parser.CPP14_v2Visitor import CPP14_v2Visitor
+from coda.analysis.cfg.lang_structures import (
+    embed_in_function_structure,
+    embed_in_do_while_structure,
+    embed_in_for_structure,
+    embed_in_switch_structure,
+    embed_in_if_structure,
+    embed_in_if_else_structure,
+    embed_in_while_structure,
+    embed_in_try_catch_structure
+)
+
+from coda.graph.utils import (
+    build_single_node_graph,
+    concat_graphs,
+    build_isolated_node_graph
+)
 
 
 class CFGExtractorVisitor(CPP14_v2Visitor):

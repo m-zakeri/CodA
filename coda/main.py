@@ -1,28 +1,28 @@
 """
-CodA main file
+CodA main driver module
 
 """
 
-
-from analyse.control_flow_graph import CFGInstListener
-from gen.CPP14_v2Lexer import CPP14_v2Lexer
-from gen.CPP14_v2Parser import CPP14_v2Parser
-from analyse.prime_path import ControlFlowGraph
 from antlr4 import *
 from pathlib import Path
 import os
 import json
 
+from coda.antlr_gen.cpp_parser.CPP14_v2Lexer import CPP14_v2Lexer
+from coda.antlr_gen.cpp_parser.CPP14_v2Parser import CPP14_v2Parser
+
+from coda.analysis.cfg.cfg_extractor_listener1 import CFGInstListener
+from coda.analysis.paths.prime_path_extractor import ControlFlowGraph
 
 # input_path=input("please enter the source code path:\n")
 # test_cases_dir = input("please enter the testcases directory:\n")
-input_path = 'test_source/1.cpp'
-test_cases_dir = 'test_source/test/'
+input_path = '../test_data/1.cpp'
+test_cases_dir = 'test_data/test/'
 
 f = open(input_path, 'r')
 name = Path(f.name).stem
-cfg_path = 'CFGS/' + name
-instrument_path = 'Instrument/' + name
+cfg_path = 'extracted_cfgs/' + name
+instrument_path = 'instrumented_programs/' + name
 try:
     os.mkdir(cfg_path)
 except:
@@ -52,7 +52,6 @@ walker = ParseTreeWalker()
 walker.walk(cfg_listener, pars_tree)
 
 quit()
-
 
 
 def checkCoverWithDetour(primepath, exepath):
@@ -125,7 +124,6 @@ def checkCoverWithSideAndDetour(primepath, exepath):
     return False
 
 
-
 # compute prime_paths
 function_prime_paths = {}
 function_logs = {}
@@ -145,9 +143,8 @@ for f_code in function_dict:
 primepaths_json = open(cfg_path + '/primepaths.json', 'w')
 json.dump(function_prime_paths, primepaths_json)
 
-
 # compute coverage
-instrument_path = 'Instrument/' + name
+instrument_path = 'instrumented_programs/' + name
 instrumented_source = instrument_path + '/instrumented_source.cpp'
 instrumented_exe = instrument_path + '/instrumented_source.exe'
 log_file_dir = 'log_file.txt'

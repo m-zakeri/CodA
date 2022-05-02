@@ -162,7 +162,7 @@ instrument_listener = InstrumentationListener(common_token_stream=self.common_to
 # Step 7: Create parse tree walker
 walker = ParseTreeWalker()
 
-# Step 8: Walk parse tree, attaching the listener to instrument the code
+# Step 8: Walk parse tree, attaching the listener to instrumented_programs the code
 walker.walk(listener=instrument_listener, t=parse_tree)
 
 # Step 9: 

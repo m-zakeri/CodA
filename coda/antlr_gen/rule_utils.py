@@ -1,6 +1,6 @@
 from antlr4 import CommonTokenStream, ParserRuleContext
 
-from src.antlr.gen.CPP14_v2Lexer import CPP14_v2Lexer
+from coda.antlr_gen.cpp_parser.CPP14_v2Lexer import CPP14_v2Lexer
 
 
 def extract_exact_text(token_stream: CommonTokenStream, rule: ParserRuleContext) -> str:

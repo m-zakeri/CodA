@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 def draw_cfg():
-    with open(r'CFGS/main.txt', mode='r') as f:
+    with open(r'tests_outputs/extracted_cfgs/main.txt', mode='r') as f:
         lines = f.readlines()
     lines = lines[1:-1]
     edges = list()

@@ -2,8 +2,8 @@ import html
 
 import graphviz as gv
 
-from src.antlr.rule_utils import extract_exact_text
-from src.graph.utils import head_node, last_node
+from coda.antlr_gen.rule_utils import extract_exact_text
+from coda.graph.utils import head_node, last_node
 
 
 def build_node_template(node_label, node_contents):

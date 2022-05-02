@@ -2,7 +2,7 @@ from functools import reduce
 
 import networkx as nx
 
-from src.antlr.rule_utils import is_break, is_return, is_continue, is_throw
+from coda.antlr_gen.rule_utils import is_break, is_return, is_continue, is_throw
 
 
 def split_on_continue(gin: nx.DiGraph, continue_return) -> nx.DiGraph:

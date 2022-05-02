@@ -2,10 +2,10 @@ import argparse
 
 from antlr4 import FileStream, CommonTokenStream
 
-from src.antlr.gen.CPP14_v2Lexer import CPP14_v2Lexer
-from src.antlr.gen.CPP14_v2Parser import CPP14_v2Parser
-from src.cfg_extractor.cfg_extractor_visitor import CFGExtractorVisitor
-from src.graph.visual import draw_CFG
+from coda.antlr_gen.cpp_parser.CPP14_v2Lexer import CPP14_v2Lexer
+from coda.antlr_gen.cpp_parser.CPP14_v2Parser import CPP14_v2Parser
+from coda.analysis.cfg.cfg_extractor_visitor import CFGExtractorVisitor
+from coda.graph.visual import draw_CFG
 
 
 def main(args):
