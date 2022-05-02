@@ -1,11 +1,22 @@
 """
+
 The Graph class in the module computes prime paths
 
 """
 
 
 class ControlFlowGraph:
+    """
+
+    """
     def __init__(self, graph_file):
+        """
+        Arges:
+
+            graph_file (str): The path of saved CFG graph
+
+
+        """
         lines = graph_file.readlines()
         self.edges = {}
         self.nodes = set()
@@ -31,6 +42,10 @@ class ControlFlowGraph:
         self.nodes.update(self.finals)
 
     def reachHead(self, path):
+        """
+
+        """
+
         first = path[0]
         non_final_nodes = self.nodes - self.finals
         for n in non_final_nodes:
@@ -39,6 +54,10 @@ class ControlFlowGraph:
         return True
 
     def reachEnd(self, path):
+        """
+
+        """
+
         last = path[-1]
         if last in self.finals:
             return True
@@ -48,6 +67,10 @@ class ControlFlowGraph:
         return True
 
     def extend(self, path):
+        """
+
+        """
+
         extended_paths = []
         last = path[-1]
         if last in self.finals:
@@ -58,6 +81,11 @@ class ControlFlowGraph:
         return extended_paths
 
     def computePrimePaths(self):
+        """
+
+
+        """
+
         self.primePaths = []
         try_paths = [[n] for n in self.nodes]
         while len(try_paths) > 0:
