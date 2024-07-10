@@ -11,26 +11,21 @@ import json
 from coda.antlr_gen.cpp_parser.CPP14_v2Lexer import CPP14_v2Lexer
 from coda.antlr_gen.cpp_parser.CPP14_v2Parser import CPP14_v2Parser
 
-from coda.analysis.cfg.cfg_extractor_listener1 import CFGInstListener
+from coda.analysis.cfg.cfg_extractor_listener2 import CFGInstListener
 from coda.analysis.paths.prime_path_extractor import ControlFlowGraph
 
 # input_path=input("please enter the source code path:\n")
 # test_cases_dir = input("please enter the testcases directory:\n")
-input_path = '../test_data/1.cpp'
+input_path = 'test_data/2.cpp'
 test_cases_dir = 'test_data/test/'
 
 f = open(input_path, 'r')
 name = Path(f.name).stem
 cfg_path = 'extracted_cfgs/' + name
 instrument_path = 'instrumented_programs/' + name
-try:
-    os.mkdir(cfg_path)
-except:
-    pass
-try:
-    os.mkdir(instrument_path)
-except:
-    pass
+
+os.makedirs(cfg_path, exist_ok=True)
+os.makedirs(instrument_path, exist_ok=True)
 
 source = f.read()
 

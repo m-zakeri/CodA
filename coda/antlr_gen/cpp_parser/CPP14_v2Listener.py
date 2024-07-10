@@ -1,6 +1,6 @@
-# Generated from C:/Users/yasein/PycharmProjects/CodeAnalayserByGraph\CPP14_v2.g4 by ANTLR 4.8
+# Generated from grammars/CPP14_v2.g4 by ANTLR 4.13.1
 from antlr4 import *
-if __name__ is not None and "." in __name__:
+if "." in __name__:
     from .CPP14_v2Parser import CPP14_v2Parser
 else:
     from CPP14_v2Parser import CPP14_v2Parser

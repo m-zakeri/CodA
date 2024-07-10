@@ -21,7 +21,8 @@ def main(args):
     # step 5: create a parse tree
     parse_tree = parser.translationunit()
     # Step 6: create an instance of CFGExtractorVisitor
-    cfg_extractor = CFGExtractorVisitor(token_stream)
+    #cfg_extractor = CFGExtractorVisitor(token_stream)
+    cfg_extractor = CFGExtractorVisitor(parse_tree)
     # Step 7: extract the cfg by visiting the parse_tree
     cfg_extractor.visit(parse_tree)
     funcs = cfg_extractor.functions
